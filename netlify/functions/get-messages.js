@@ -1,27 +1,32 @@
-const { neon } = require('@neondatabase/serverless');
+const { MongoClient } = require('mongodb');
 
-exports.handler = async (event, context) => {
-    try {
-        const sql = neon(process.env.DATABASE_URL);
-        
-        const messages = await sql`
-            SELECT id, author, content, timestamp, replies 
-            FROM messages 
-            ORDER BY timestamp DESC
-        `;
+exports.handler = async function(event, context) {
+  // Allow CORS
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE'
+  };
 
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(messages)
-        };
-    } catch (error) {
-        console.error('Database error:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Failed to load messages' })
-        };
-    }
+  try {
+    const client = new MongoClient(process.env.MONGODB_URI);
+    await client.connect();
+    
+    const db = client.db('wonxin');
+    const messages = await db.collection('messages').find({}).sort({ timestamp: -1 }).toArray();
+    
+    await client.close();
+    
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(messages)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
 };

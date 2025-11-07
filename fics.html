@@ -829,21 +829,120 @@
         </div>
         <p>&copy; 2025 by wonxinau. All rights reserved.</p>
     </footer>
-<script>
-   document.addEventListener('DOMContentLoaded', function() {
-    // ... (keep all your existing variable declarations and admin code)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const messageForm = document.getElementById('messageForm');
+    const messagesContainer = document.getElementById('messagesContainer');
+    const adminToggle = document.getElementById('adminToggle');
+    const adminStatus = document.getElementById('adminStatus');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const passwordModal = document.getElementById('passwordModal');
+    const adminPassword = document.getElementById('adminPassword');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const passwordError = document.getElementById('passwordError');
+    const passwordSuccess = document.getElementById('passwordSuccess');
     
-    // Base URL for Netlify functions
-    const API_BASE = '/.netlify/functions';
+    // Google Sheets configuration - REPLACE WITH YOUR SHEET ID!
+    const SHEET_ID = '1R_uI8jFBWa7hAwYY858wLKwt0GjLsp2xCs7SAJH-Tws'; // Replace this!
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     
-    // Load messages from database
+    let isAdminMode = false;
+    const ADMIN_PASSWORD = "ohmywonxinyourethebestrealcouple0603";
+    
+    // Load messages when page opens
     loadMessages();
     
-    // Updated loadMessages function
+    // Keep all your existing admin functions (they work fine)
+    adminLoginBtn.addEventListener('click', function() {
+        if (!isAdminMode) {
+            showPasswordModal();
+        } else {
+            deactivateAdminMode();
+        }
+    });
+    
+    function showPasswordModal() {
+        passwordModal.classList.add('active');
+        adminPassword.focus();
+        passwordError.textContent = '';
+        passwordSuccess.textContent = '';
+    }
+    
+    function hidePasswordModal() {
+        passwordModal.classList.remove('active');
+        adminPassword.value = '';
+        passwordError.textContent = '';
+        passwordSuccess.textContent = '';
+    }
+    
+    cancelBtn.addEventListener('click', hidePasswordModal);
+    
+    confirmBtn.addEventListener('click', function() {
+        const enteredPassword = adminPassword.value.trim();
+        
+        if (enteredPassword === ADMIN_PASSWORD) {
+            activateAdminMode();
+            passwordSuccess.textContent = 'Authentication successful!';
+            setTimeout(() => hidePasswordModal(), 1000);
+        } else {
+            passwordError.textContent = 'Incorrect password. Please try again.';
+            adminPassword.classList.add('shake');
+            adminPassword.value = '';
+            setTimeout(() => adminPassword.classList.remove('shake'), 500);
+        }
+    });
+    
+    adminPassword.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') confirmBtn.click();
+    });
+    
+    function activateAdminMode() {
+        isAdminMode = true;
+        adminToggle.checked = true;
+        adminStatus.textContent = 'Active';
+        adminStatus.classList.add('active');
+        adminLoginBtn.textContent = 'Logout as Admin 🔓';
+        adminLoginBtn.style.backgroundColor = 'var(--admin-red)';
+        toggleDeleteButtons(true);
+    }
+    
+    function deactivateAdminMode() {
+        isAdminMode = false;
+        adminToggle.checked = false;
+        adminStatus.textContent = 'Inactive';
+        adminStatus.classList.remove('active');
+        adminLoginBtn.textContent = 'Login as Admin 🔒';
+        adminLoginBtn.style.backgroundColor = 'var(--soft-pink)';
+        toggleDeleteButtons(false);
+    }
+    
+    adminToggle.addEventListener('change', function() {
+        if (!this.checked && isAdminMode) deactivateAdminMode();
+    });
+    
+    // NEW: Load messages from Google Sheets
     async function loadMessages() {
         try {
-            const response = await fetch(`${API_BASE}/get-messages`);
-            const messages = await response.json();
+            const response = await fetch(SHEET_URL);
+            const text = await response.text();
+            const json = JSON.parse(text.substring(47).slice(0, -2));
+            
+            const messages = [];
+            if (json.table.rows && json.table.rows.length > 0) {
+                for (let i = 0; i < json.table.rows.length; i++) {
+                    const row = json.table.rows[i];
+                    if (row.c[0] && row.c[0].v) { // Check if row has data
+                        messages.push({
+                            id: row.c[0] ? row.c[0].v : Date.now() + i,
+                            author: row.c[1] ? row.c[1].v : 'Anonymous',
+                            content: row.c[2] ? row.c[2].v : '',
+                            timestamp: row.c[3] ? row.c[3].v : new Date().toISOString(),
+                            replies: []
+                        });
+                    }
+                }
+            }
             
             if (messages.length === 0) {
                 showEmptyState();
@@ -858,51 +957,256 @@
             toggleDeleteButtons(isAdminMode);
         } catch (error) {
             console.error('Error loading messages:', error);
-            // Fallback to localStorage if API fails
+            // Fallback to localStorage
             const localMessages = JSON.parse(localStorage.getItem('joyMessages')) || [];
             if (localMessages.length > 0) {
                 messagesContainer.innerHTML = '';
-                localMessages.forEach(message => {
-                    displayMessage(message);
-                });
+                localMessages.forEach(message => displayMessage(message));
+                toggleDeleteButtons(isAdminMode);
             } else {
                 showEmptyState();
             }
         }
     }
     
-    // Updated saveMessage function
-    async function saveMessage(message) {
-        try {
-            const response = await fetch(`${API_BASE}/save-message`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(message)
-            });
+    // NEW: Simple save to localStorage only (for now)
+    function saveMessage(message) {
+        // Just save to localStorage for now - it's simple and works
+        let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
+        messages.unshift(message);
+        localStorage.setItem('joyMessages', JSON.stringify(messages));
+        return true;
+    }
+    
+    // Handle form submission
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const author = document.getElementById('author').value.trim();
+        const content = document.getElementById('content').value.trim();
+        
+        if (author && content) {
+            const message = {
+                id: Date.now(),
+                author: author,
+                content: content,
+                timestamp: new Date().toISOString(),
+                replies: []
+            };
             
-            const result = await response.json();
-            
-            if (result.success) {
-                // Also save to localStorage as backup
-                let localMessages = JSON.parse(localStorage.getItem('joyMessages')) || [];
-                localMessages.unshift(message);
-                localStorage.setItem('joyMessages', JSON.stringify(localMessages));
+            const saved = saveMessage(message);
+            if (saved) {
+                displayMessage(message);
+                messageForm.reset();
+                showSuccessAnimation();
+                
+                // Remove empty state if it exists
+                const emptyState = document.querySelector('.empty-state');
+                if (emptyState) emptyState.remove();
             }
-        } catch (error) {
-            console.error('Error saving message:', error);
-            // Fallback to localStorage
-            let localMessages = JSON.parse(localStorage.getItem('joyMessages')) || [];
-            localMessages.unshift(message);
-            localStorage.setItem('joyMessages', JSON.stringify(localMessages));
+        }
+    });
+    
+    // Display message function (keep your existing one)
+    function displayMessage(message) {
+        const emptyState = document.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+        
+        const messageCard = document.createElement('div');
+        messageCard.className = 'message-card';
+        messageCard.dataset.id = message.id;
+        
+        const time = new Date(message.timestamp).toLocaleString();
+        
+        messageCard.innerHTML = `
+            <div class="message-header">
+                <div class="message-author">${escapeHtml(message.author)}</div>
+                <div class="message-time">${time}</div>
+            </div>
+            <div class="message-content">${escapeHtml(message.content)}</div>
+            <div class="message-actions">
+                <button class="delete-btn">Delete Message 🗑️</button>
+            </div>
+            <div class="reply-section">
+                <div class="reply-form">
+                    <input type="text" class="reply-input" placeholder="Write a reply..." required>
+                    <button type="button" class="reply-btn">Reply 💬</button>
+                </div>
+                <div class="replies-container" id="replies-${message.id}">
+                    ${(message.replies || []).map(reply => `
+                        <div class="reply-card" data-reply-id="${reply.id}">
+                            <div class="reply-header">
+                                <div class="reply-author">${escapeHtml(reply.author)}</div>
+                                <div class="reply-time">${new Date(reply.timestamp).toLocaleString()}</div>
+                            </div>
+                            <div class="reply-content">${escapeHtml(reply.content)}</div>
+                            <div class="reply-actions">
+                                <button class="delete-reply-btn">×</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        const replyBtn = messageCard.querySelector('.reply-btn');
+        const replyInput = messageCard.querySelector('.reply-input');
+        
+        replyBtn.addEventListener('click', function() {
+            const replyContent = replyInput.value.trim();
+            if (replyContent) {
+                const reply = {
+                    id: Date.now(),
+                    author: 'Anonymous',
+                    content: replyContent,
+                    timestamp: new Date().toISOString()
+                };
+                addReply(message.id, reply);
+                replyInput.value = '';
+            }
+        });
+        
+        replyInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') replyBtn.click();
+        });
+        
+        const deleteBtn = messageCard.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', function() {
+            if (isAdminMode && confirm('Are you sure you want to delete this message?')) {
+                deleteMessage(message.id);
+            }
+        });
+        
+        const replyCards = messageCard.querySelectorAll('.reply-card');
+        replyCards.forEach(replyCard => {
+            const deleteReplyBtn = replyCard.querySelector('.delete-reply-btn');
+            const replyId = replyCard.dataset.replyId;
+            deleteReplyBtn.addEventListener('click', function() {
+                if (isAdminMode && confirm('Are you sure you want to delete this reply?')) {
+                    deleteReply(message.id, replyId);
+                }
+            });
+        });
+        
+        messagesContainer.prepend(messageCard);
+        toggleDeleteButtons(isAdminMode);
+    }
+    
+    function addReply(messageId, reply) {
+        let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
+        const messageIndex = messages.findIndex(msg => msg.id == messageId);
+        
+        if (messageIndex !== -1) {
+            if (!messages[messageIndex].replies) messages[messageIndex].replies = [];
+            messages[messageIndex].replies.push(reply);
+            localStorage.setItem('joyMessages', JSON.stringify(messages));
+            
+            // Update UI
+            const repliesContainer = document.getElementById(`replies-${messageId}`);
+            const replyCard = document.createElement('div');
+            replyCard.className = 'reply-card';
+            replyCard.dataset.replyId = reply.id;
+            replyCard.innerHTML = `
+                <div class="reply-header">
+                    <div class="reply-author">${escapeHtml(reply.author)}</div>
+                    <div class="reply-time">${new Date(reply.timestamp).toLocaleString()}</div>
+                </div>
+                <div class="reply-content">${escapeHtml(reply.content)}</div>
+                <div class="reply-actions">
+                    <button class="delete-reply-btn">×</button>
+                </div>
+            `;
+            
+            const deleteReplyBtn = replyCard.querySelector('.delete-reply-btn');
+            deleteReplyBtn.addEventListener('click', function() {
+                if (isAdminMode && confirm('Are you sure you want to delete this reply?')) {
+                    deleteReply(messageId, reply.id);
+                }
+            });
+            deleteReplyBtn.style.display = isAdminMode ? 'block' : 'none';
+            
+            repliesContainer.appendChild(replyCard);
         }
     }
     
-    // ... (keep the rest of your existing functions like displayMessage, deleteMessage, etc.)
+    function deleteMessage(messageId) {
+        let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
+        messages = messages.filter(msg => msg.id != messageId);
+        localStorage.setItem('joyMessages', JSON.stringify(messages));
+        
+        // Remove from UI
+        const messageCard = document.querySelector(`.message-card[data-id="${messageId}"]`);
+        if (messageCard) messageCard.remove();
+        
+        if (messages.length === 0) showEmptyState();
+    }
     
-    // You'll need to update deleteMessage and addReply functions similarly
-    // to make API calls to new functions you create
+    function deleteReply(messageId, replyId) {
+        let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
+        const messageIndex = messages.findIndex(msg => msg.id == messageId);
+        
+        if (messageIndex !== -1 && messages[messageIndex].replies) {
+            messages[messageIndex].replies = messages[messageIndex].replies.filter(reply => reply.id != replyId);
+            localStorage.setItem('joyMessages', JSON.stringify(messages));
+            
+            // Remove from UI
+            const replyCard = document.querySelector(`.reply-card[data-reply-id="${replyId}"]`);
+            if (replyCard) replyCard.remove();
+        }
+    }
+    
+    function toggleDeleteButtons(show) {
+        const deleteBtns = document.querySelectorAll('.delete-btn, .delete-reply-btn');
+        deleteBtns.forEach(btn => {
+            btn.style.display = show ? 'block' : 'none';
+        });
+    }
+    
+    function showEmptyState() {
+        messagesContainer.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">💌</div>
+                <h3>No messages yet</h3>
+                <p>Be the first to share something joyful!</p>
+            </div>
+        `;
+    }
+    
+    function showSuccessAnimation() {
+        for (let i = 0; i < 5; i++) createFloatingHeart();
+    }
+    
+    function createFloatingHeart() {
+        const heart = document.createElement('div');
+        heart.innerHTML = '♥';
+        heart.style.position = 'fixed';
+        heart.style.color = '#ffb6c1';
+        heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+        heart.style.left = Math.random() * window.innerWidth + 'px';
+        heart.style.top = window.innerHeight + 'px';
+        heart.style.zIndex = '1000';
+        heart.style.pointerEvents = 'none';
+        document.body.appendChild(heart);
+        
+        const animation = heart.animate([
+            { transform: 'translateY(0) scale(1)', opacity: 1 },
+            { transform: `translateY(-${Math.random() * 300 + 200}px) scale(0.5)`, opacity: 0 }
+        ], {
+            duration: Math.random() * 2000 + 1000,
+            easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+        });
+        
+        animation.onfinish = () => heart.remove();
+    }
+    
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 });
 </script>
 </body>

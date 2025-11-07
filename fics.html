@@ -830,7 +830,7 @@
         <p>&copy; 2025 by wonxinau. All rights reserved.</p>
     </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+   document.addEventListener('DOMContentLoaded', function() {
     const messageForm = document.getElementById('messageForm');
     const messagesContainer = document.getElementById('messagesContainer');
     const adminToggle = document.getElementById('adminToggle');
@@ -843,9 +843,12 @@
     const passwordError = document.getElementById('passwordError');
     const passwordSuccess = document.getElementById('passwordSuccess');
     
-    // Google Sheets configuration - REPLACE WITH YOUR SHEET ID!
-    const SHEET_ID = '1R_uI8jFBWa7hAwYY858wLKwt0GjLsp2xCs7SAJH-Tws'; // Replace this!
-    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    // Supabase configuration - REPLACE WITH YOUR VALUES!
+    const SUPABASE_URL = 'https://duejmhtpcjmnltwgmqlx.supabase.co'; // Replace with your URL
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1ZWptaHRwY2ptbmx0d2dtcWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1MzkzOTksImV4cCI6MjA3ODExNTM5OX0.IOdSLCiUZy7WPp-r2klG8URxAcFodnoIaVhvMnD5Dkk'; // Replace with your anon key
+    
+    // Initialize Supabase
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     let isAdminMode = false;
     const ADMIN_PASSWORD = "ohmywonxinyourethebestrealcouple0603";
@@ -853,7 +856,32 @@
     // Load messages when page opens
     loadMessages();
     
-    // Keep all your existing admin functions (they work fine)
+    // Set up real-time subscription for new messages
+    supabase
+        .channel('messages')
+        .on('postgres_changes', 
+            { event: 'INSERT', schema: 'public', table: 'messages' },
+            (payload) => {
+                // New message added by someone else
+                displayMessage(payload.new);
+            }
+        )
+        .on('postgres_changes',
+            { event: 'DELETE', schema: 'public', table: 'messages' },
+            (payload) => {
+                // Message deleted by admin
+                const messageCard = document.querySelector(`.message-card[data-id="${payload.old.id}"]`);
+                if (messageCard) messageCard.remove();
+                
+                // Show empty state if no messages left
+                if (document.querySelectorAll('.message-card').length === 0) {
+                    showEmptyState();
+                }
+            }
+        )
+        .subscribe();
+    
+    // Admin functions
     adminLoginBtn.addEventListener('click', function() {
         if (!isAdminMode) {
             showPasswordModal();
@@ -921,30 +949,17 @@
         if (!this.checked && isAdminMode) deactivateAdminMode();
     });
     
-    // NEW: Load messages from Google Sheets
+    // Load messages from Supabase
     async function loadMessages() {
         try {
-            const response = await fetch(SHEET_URL);
-            const text = await response.text();
-            const json = JSON.parse(text.substring(47).slice(0, -2));
+            const { data: messages, error } = await supabase
+                .from('messages')
+                .select('*')
+                .order('timestamp', { ascending: false });
             
-            const messages = [];
-            if (json.table.rows && json.table.rows.length > 0) {
-                for (let i = 0; i < json.table.rows.length; i++) {
-                    const row = json.table.rows[i];
-                    if (row.c[0] && row.c[0].v) { // Check if row has data
-                        messages.push({
-                            id: row.c[0] ? row.c[0].v : Date.now() + i,
-                            author: row.c[1] ? row.c[1].v : 'Anonymous',
-                            content: row.c[2] ? row.c[2].v : '',
-                            timestamp: row.c[3] ? row.c[3].v : new Date().toISOString(),
-                            replies: []
-                        });
-                    }
-                }
-            }
+            if (error) throw error;
             
-            if (messages.length === 0) {
+            if (!messages || messages.length === 0) {
                 showEmptyState();
                 return;
             }
@@ -957,29 +972,33 @@
             toggleDeleteButtons(isAdminMode);
         } catch (error) {
             console.error('Error loading messages:', error);
-            // Fallback to localStorage
-            const localMessages = JSON.parse(localStorage.getItem('joyMessages')) || [];
-            if (localMessages.length > 0) {
-                messagesContainer.innerHTML = '';
-                localMessages.forEach(message => displayMessage(message));
-                toggleDeleteButtons(isAdminMode);
-            } else {
-                showEmptyState();
-            }
+            showEmptyState();
         }
     }
     
-    // NEW: Simple save to localStorage only (for now)
-    function saveMessage(message) {
-        // Just save to localStorage for now - it's simple and works
-        let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
-        messages.unshift(message);
-        localStorage.setItem('joyMessages', JSON.stringify(messages));
-        return true;
+    // Save message to Supabase
+    async function saveMessage(message) {
+        try {
+            const { data, error } = await supabase
+                .from('messages')
+                .insert([message])
+                .select();
+            
+            if (error) throw error;
+            
+            return true;
+        } catch (error) {
+            console.error('Error saving message:', error);
+            // Fallback to localStorage
+            let localMessages = JSON.parse(localStorage.getItem('joyMessages')) || [];
+            localMessages.unshift(message);
+            localStorage.setItem('joyMessages', JSON.stringify(localMessages));
+            return false;
+        }
     }
     
     // Handle form submission
-    messageForm.addEventListener('submit', function(e) {
+    messageForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const author = document.getElementById('author').value.trim();
@@ -987,27 +1006,24 @@
         
         if (author && content) {
             const message = {
-                id: Date.now(),
                 author: author,
                 content: content,
-                timestamp: new Date().toISOString(),
                 replies: []
             };
             
-            const saved = saveMessage(message);
+            const saved = await saveMessage(message);
             if (saved) {
-                displayMessage(message);
                 messageForm.reset();
                 showSuccessAnimation();
                 
-                // Remove empty state if it exists
-                const emptyState = document.querySelector('.empty-state');
-                if (emptyState) emptyState.remove();
+                // Note: The message will appear automatically via real-time subscription
+            } else {
+                alert('Failed to save message. Please try again.');
             }
         }
     });
     
-    // Display message function (keep your existing one)
+    // Display message function
     function displayMessage(message) {
         const emptyState = document.querySelector('.empty-state');
         if (emptyState) emptyState.remove();
@@ -1052,7 +1068,7 @@
         const replyBtn = messageCard.querySelector('.reply-btn');
         const replyInput = messageCard.querySelector('.reply-input');
         
-        replyBtn.addEventListener('click', function() {
+        replyBtn.addEventListener('click', async function() {
             const replyContent = replyInput.value.trim();
             if (replyContent) {
                 const reply = {
@@ -1061,7 +1077,8 @@
                     content: replyContent,
                     timestamp: new Date().toISOString()
                 };
-                addReply(message.id, reply);
+                
+                await addReply(message.id, reply);
                 replyInput.value = '';
             }
         });
@@ -1071,9 +1088,9 @@
         });
         
         const deleteBtn = messageCard.querySelector('.delete-btn');
-        deleteBtn.addEventListener('click', function() {
+        deleteBtn.addEventListener('click', async function() {
             if (isAdminMode && confirm('Are you sure you want to delete this message?')) {
-                deleteMessage(message.id);
+                await deleteMessage(message.id);
             }
         });
         
@@ -1081,9 +1098,9 @@
         replyCards.forEach(replyCard => {
             const deleteReplyBtn = replyCard.querySelector('.delete-reply-btn');
             const replyId = replyCard.dataset.replyId;
-            deleteReplyBtn.addEventListener('click', function() {
+            deleteReplyBtn.addEventListener('click', async function() {
                 if (isAdminMode && confirm('Are you sure you want to delete this reply?')) {
-                    deleteReply(message.id, replyId);
+                    await deleteReply(message.id, replyId);
                 }
             });
         });
@@ -1092,14 +1109,29 @@
         toggleDeleteButtons(isAdminMode);
     }
     
-    function addReply(messageId, reply) {
-        let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
-        const messageIndex = messages.findIndex(msg => msg.id == messageId);
-        
-        if (messageIndex !== -1) {
-            if (!messages[messageIndex].replies) messages[messageIndex].replies = [];
-            messages[messageIndex].replies.push(reply);
-            localStorage.setItem('joyMessages', JSON.stringify(messages));
+    // Add reply to message
+    async function addReply(messageId, reply) {
+        try {
+            // First get the current message
+            const { data: message, error } = await supabase
+                .from('messages')
+                .select('replies')
+                .eq('id', messageId)
+                .single();
+            
+            if (error) throw error;
+            
+            // Update replies array
+            const currentReplies = message.replies || [];
+            const updatedReplies = [...currentReplies, reply];
+            
+            // Update in database
+            const { error: updateError } = await supabase
+                .from('messages')
+                .update({ replies: updatedReplies })
+                .eq('id', messageId);
+            
+            if (updateError) throw updateError;
             
             // Update UI
             const repliesContainer = document.getElementById(`replies-${messageId}`);
@@ -1118,40 +1150,66 @@
             `;
             
             const deleteReplyBtn = replyCard.querySelector('.delete-reply-btn');
-            deleteReplyBtn.addEventListener('click', function() {
+            deleteReplyBtn.addEventListener('click', async function() {
                 if (isAdminMode && confirm('Are you sure you want to delete this reply?')) {
-                    deleteReply(messageId, reply.id);
+                    await deleteReply(messageId, reply.id);
                 }
             });
             deleteReplyBtn.style.display = isAdminMode ? 'block' : 'none';
             
             repliesContainer.appendChild(replyCard);
+            
+        } catch (error) {
+            console.error('Error adding reply:', error);
         }
     }
     
-    function deleteMessage(messageId) {
-        let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
-        messages = messages.filter(msg => msg.id != messageId);
-        localStorage.setItem('joyMessages', JSON.stringify(messages));
-        
-        // Remove from UI
-        const messageCard = document.querySelector(`.message-card[data-id="${messageId}"]`);
-        if (messageCard) messageCard.remove();
-        
-        if (messages.length === 0) showEmptyState();
+    // Delete message
+    async function deleteMessage(messageId) {
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .delete()
+                .eq('id', messageId);
+            
+            if (error) throw error;
+            
+            // UI will update automatically via real-time subscription
+            
+        } catch (error) {
+            console.error('Error deleting message:', error);
+        }
     }
     
-    function deleteReply(messageId, replyId) {
-        let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
-        const messageIndex = messages.findIndex(msg => msg.id == messageId);
-        
-        if (messageIndex !== -1 && messages[messageIndex].replies) {
-            messages[messageIndex].replies = messages[messageIndex].replies.filter(reply => reply.id != replyId);
-            localStorage.setItem('joyMessages', JSON.stringify(messages));
+    // Delete reply
+    async function deleteReply(messageId, replyId) {
+        try {
+            // First get the current message
+            const { data: message, error } = await supabase
+                .from('messages')
+                .select('replies')
+                .eq('id', messageId)
+                .single();
+            
+            if (error) throw error;
+            
+            // Filter out the reply to delete
+            const updatedReplies = (message.replies || []).filter(reply => reply.id != replyId);
+            
+            // Update in database
+            const { error: updateError } = await supabase
+                .from('messages')
+                .update({ replies: updatedReplies })
+                .eq('id', messageId);
+            
+            if (updateError) throw updateError;
             
             // Remove from UI
             const replyCard = document.querySelector(`.reply-card[data-reply-id="${replyId}"]`);
             if (replyCard) replyCard.remove();
+            
+        } catch (error) {
+            console.error('Error deleting reply:', error);
         }
     }
     
@@ -1209,5 +1267,7 @@
     }
 });
 </script>
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>

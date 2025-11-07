@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wonxin Community</title>
+    <style>
+        /* Base Styles & Color Palette */
+        :root {
+            --baby-pink: #ffd1dc;
+            --baby-yellow: #fff9c4;
+            --soft-pink: #ffb6c1;
+            --soft-yellow: #fff59d;
+            --text-color: #8a5a44;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--baby-pink) 0%, var(--baby-yellow) 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .bannerImage{
+          width:100%;
+          height:100%;
+          
+        }
+        .logo {
+         
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite alternate;
+            text-shadow: 2px 2px 4px var(--shadow);
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px var(--shadow);
+            opacity: 0.8;
+        }
+
+        .cloud-1 {
+            width: 70px;
+            height: 40px;
+            top: 20px;
+            left: 5%;
+            animation: float 15s infinite linear;
+        }
+
+        .cloud-2 {
+            width: 120px;
+            height: 60px;
+            top: 40px;
+            right: 15%;
+            animation: float 20s infinite linear reverse;
+        }
+
+        .cloud-3 {
+            width: 100px;
+            height: 50px;
+            bottom: 30px;
+            left: 20%;
+            animation: float 18s infinite linear;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px var(--shadow);
+        }
+
+        nav a:hover {
+            background-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px var(--shadow);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            gap: 2rem;
+        }
+
+        .hero-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--soft-pink);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 8px var(--shadow);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .cta-button:hover {
+            background-color: var(--soft-yellow);
+            transform: scale(1.05);
+        }
+
+        .hero-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+         .cats{
+           width:300px;}
+        .character {
+            width: 200px;
+            height: 200px;
+            background-color: var(--soft-yellow);
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            animation: wiggle 3s infinite alternate;
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+
+        .character::before, .character::after {
+            content: '';
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .character::before {
+            width: 60px;
+            height: 60px;
+            top: 40px;
+            left: 30px;
+        }
+
+        .character::after {
+            width: 60px;
+            height: 60px;
+            top: 40px;
+            right: 30px;
+        }
+
+        .character .eye {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--text-color);
+            border-radius: 50%;
+            top: 55px;
+        }
+
+        .character .eye-left {
+            left: 50px;
+        }
+
+        .character .eye-right {
+            right: 50px;
+        }
+
+        .character .mouth {
+            position: absolute;
+            width: 80px;
+            height: 30px;
+            border-bottom: 8px solid var(--text-color);
+            border-radius: 0 0 40px 40px;
+            bottom: 50px;
+            left: 60px;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px var(--shadow);
+        }
+
+        .feature-icon {
+            width:200px;
+            margin-bottom: 1rem;
+            animation: spin 10s infinite linear;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-top: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .hearts {
+            margin: 1rem 0;
+        }
+
+        .heart {
+            display: inline-block;
+            color: var(--soft-pink);
+            font-size: 1.5rem;
+            margin: 0 0.2rem;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        @keyframes wiggle {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav {
+                flex-wrap: wrap;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+      <img src="images/new.png" class="bannerImage">
+        <div class="logo">☁️Wonxin☁️</div>
+        
+        <nav>
+            <a href="#">Home</a>
+            <a href="sangwon.html">Sangwon</a>
+            <a href="anxin.html">Anxin</a>
+            <a href="gallary.html">wonxin Gallery</a>
+            <a href="fics.html">Wonxin Space</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Welcome to Our Cute wonxin Community!</h1>
+                <p>where you can ask about any fanfic you want or share your thoughts and yap about wonxin!!or you can just admire our wonxin gallery🤭.</p>
+                <a href="#" class="cta-button">wonxin hearts</a>
+            </div>
+            <div class="hero-image">
+              <img src="images/cats.png" class="cats">
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="feature">
+                <img src="images/snow.png " class="feature-icon">
+                <h3>Get to know Wonxin</h3>
+                <p>know more about wonxin and their journey before and after boys2planet</p>
+            </div>
+            <div class="feature">
+                <img src="images/pola.png"class="feature-icon">
+                <h3>Wonxin Gallery</h3>
+                <p>watch wonxin's gallery and enjoy their moments together</p>
+            </div>
+            <div class="feature">
+                <img src="images/kitty.png"class="feature-icon">
+                <h3>Wonxin Space</h3>
+                <p>Use Wonxin Space to ask for fic recommendation, ask about wonxin !! or request a fanfic idea ♥</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Made with lots of love</p>
+        <div class="hearts">
+            <span class="heart">♥</span>
+            <span class="heart">♥</span>
+            <span class="heart">♥</span>
+        </div>
+        <p>&copy; 2025 by wonxinau. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make features appear with delay
+            const features = document.querySelectorAll('.feature');
+            features.forEach((feature, index) => {
+                feature.style.animationDelay = `${index * 0.2}s`;
+            });
+            
+            // Add click effect to CTA button
+            const ctaButton = document.querySelector('.cta-button');
+            ctaButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Create a burst of hearts
+                for (let i = 0; i < 10; i++) {
+                    createHeart();
+                }
+            });
+            
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.innerHTML = '♥';
+                heart.style.position = 'fixed';
+                heart.style.color = '#ffb6c1';
+                heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+                heart.style.left = Math.random() * window.innerWidth + 'px';
+                heart.style.top = window.innerHeight + 'px';
+                heart.style.zIndex = '1000';
+                heart.style.pointerEvents = 'none';
+                document.body.appendChild(heart);
+                
+                // Animate heart
+                const animation = heart.animate([
+                    { transform: 'translateY(0) scale(1)', opacity: 1 },
+                    { transform: `translateY(-${Math.random() * 300 + 200}px) scale(0.5)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                });
+                
+                // Remove heart after animation
+                animation.onfinish = () => {
+                    heart.remove();
+                };
+            }
+        });
+    </script>
+</body>
+</html>

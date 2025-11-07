@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wonxin - Gallery</title>
+    <style>
+        /* Base Styles & Color Palette */
+        :root {
+            --baby-pink: #ffd1dc;
+            --baby-yellow: #fff9c4;
+            --soft-pink: #ffb6c1;
+            --soft-yellow: #fff59d;
+            --text-color: #8a5a44;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--baby-pink) 0%, var(--baby-yellow) 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Header Styles - Improved Responsiveness */
+        header {
+            padding: clamp(1rem, 3vw, 2rem);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: clamp(1rem, 3vw, 2rem);
+        }
+
+        .logo {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            margin-bottom: clamp(0.5rem, 2vw, 1rem);
+            animation: bounce 2s infinite alternate;
+            text-shadow: 2px 2px 4px var(--shadow);
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            margin-bottom: clamp(0.5rem, 2vw, 1rem);
+            padding: 0 1rem;
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px var(--shadow);
+            opacity: 0.8;
+        }
+
+        .cloud-1 {
+            width: clamp(40px, 10vw, 80px);
+            height: clamp(20px, 5vw, 40px);
+            top: 10px;
+            left: 5%;
+            animation: float 15s infinite linear;
+        }
+
+        .cloud-2 {
+            width: clamp(60px, 15vw, 120px);
+            height: clamp(30px, 7.5vw, 60px);
+            top: 20px;
+            right: 8%;
+            animation: float 20s infinite linear reverse;
+        }
+
+        .cloud-3 {
+            width: clamp(50px, 12vw, 100px);
+            height: clamp(25px, 6vw, 50px);
+            bottom: 15px;
+            left: 15%;
+            animation: float 18s infinite linear;
+        }
+
+        /* Navigation - Improved Responsiveness */
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: clamp(0.5rem, 2vw, 1rem);
+            margin: clamp(1rem, 3vw, 1.5rem) 0;
+            padding: 0 1rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            padding: clamp(0.4rem, 1.5vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
+            border-radius: 30px;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px var(--shadow);
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            background-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px var(--shadow);
+        }
+        
+        /* Gallery Container */
+        .gallery-container {
+            max-width: min(1000px, 95vw);
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: clamp(1rem, 3vw, 2rem);
+            box-shadow: 0 8px 25px var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        /* Gallery Content */
+        .gallery-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-content {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        /* Image Section */
+        .image-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 100%;
+        }
+
+        .image-frame {
+            width: 100%;
+            max-width: 500px;
+            height: clamp(200px, 40vw, 350px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px var(--shadow);
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+            cursor: pointer;
+        }
+
+        .gallery-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-image:hover {
+            transform: scale(1.03);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--baby-pink) 0%, var(--baby-yellow) 100%);
+            color: var(--text-color);
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+        }
+
+        .image-placeholder-icon {
+            font-size: clamp(2rem, 8vw, 3rem);
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite alternate;
+        }
+
+        /* Description Overlay */
+        .description-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: clamp(1rem, 3vw, 2rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 20;
+            text-align: center;
+        }
+
+        .description-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .overlay-title {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            margin-bottom: 1rem;
+            color: var(--soft-pink);
+        }
+
+        .overlay-date {
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            color: #aaa;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .overlay-description {
+            line-height: 1.6;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .close-overlay {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--soft-pink);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px var(--shadow);
+            z-index: 25;
+        }
+
+        /* Navigation Arrows - Fixed positioning */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--soft-pink);
+            color: white;
+            width: clamp(35px, 8vw, 50px);
+            height: clamp(35px, 8vw, 50px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            cursor: pointer;
+            box-shadow: 0 4px 8px var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 15;
+            animation: pulse 2s infinite;
+        }
+
+        .nav-arrow:hover {
+            background-color: var(--soft-yellow);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev-arrow {
+            left: clamp(-20px, -4vw, -25px);
+        }
+
+        .next-arrow {
+            right: clamp(-20px, -4vw, -25px);
+        }
+
+        /* Image Counter */
+        .image-counter {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            color: var(--text-color);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: clamp(1rem, 3vw, 2rem);
+            margin-top: 3rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .hearts {
+            margin: 1rem 0;
+        }
+
+        .heart {
+            display: inline-block;
+            color: var(--soft-pink);
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            margin: 0 0.2rem;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.1); }
+            100% { transform: translateY(-50%) scale(1); }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        /* Small devices (phones, 480px and down) */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .gallery-container {
+                padding: 1rem;
+            }
+            
+            .description-overlay {
+                padding: 1rem;
+            }
+            
+            .overlay-title {
+                margin-bottom: 0.5rem;
+            }
+            
+            .overlay-date {
+                margin-bottom: 1rem;
+            }
+            
+            .close-overlay {
+                top: 10px;
+                right: 10px;
+                width: 25px;
+                height: 25px;
+            }
+            
+            .cloud-1, .cloud-2, .cloud-3 {
+                display: none; /* Hide clouds on very small screens */
+            }
+        }
+
+        /* Medium devices (tablets, 768px and down) */
+        @media (max-width: 768px) {
+            .gallery-content {
+                flex-direction: column;
+            }
+            
+            .image-frame {
+                height: clamp(200px, 50vw, 300px);
+            }
+            
+            .description-overlay {
+                padding: 1.5rem;
+            }
+            
+            .overlay-title {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Large devices (desktops, 1024px and down) */
+        @media (max-width: 1024px) {
+            .gallery-container {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        
+        <div class="logo">🌸 Wonxin Gallery 🌸</div>
+       
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="sangwon.html">Sangwon</a>
+            <a href="anxin.html">Anxin</a>
+            <a href="#">wonxin Gallery</a>
+            <a href="fics.html">Wonxin Space</a>
+        </nav>
+
+        <p class="subtitle">Click on images to see descriptions</p>
+    </header>
+
+    <div class="gallery-container">
+        <div class="gallery-content">
+            <div class="image-section">
+                <div class="image-frame">
+                    <div class="image-placeholder">
+                        <div class="image-placeholder-icon">🖼️</div>
+                        <p>Click the arrows to browse through the Gallery!</p>
+                    </div>
+                    <!-- Images will be loaded here by JavaScript -->
+                    <div class="description-overlay">
+                        <div class="close-overlay">×</div>
+                        <h2 class="overlay-title" id="overlayTitle">Welcome to Wonxin gallary</h2>
+                        <p class="overlay-date" id="overlayDate">Start exploring with the arrows</p>
+                        <p class="overlay-description" id="overlayDescription">
+                            This gallery showcases some of my favorite Wonxin moments. 
+                            Each image holds a special memory that I'd love to share with you. 
+                            Use the cute arrows to navigate through the collection!
+                        </p>
+                    </div>
+                </div>
+                <div class="image-counter">
+                    <span id="currentImage">1</span> of <span id="totalImages">37</span>
+                </div>
+                <div class="nav-arrow prev-arrow">←</div>
+                <div class="nav-arrow next-arrow">→</div>
+            </div>
+        </div>
+    </div>
+
+    
+    <footer>
+        <p>Made with lots of love</p>
+        <div class="hearts">
+            <span class="heart">♥</span>
+            <span class="heart">♥</span>
+            <span class="heart">♥</span>
+        </div>
+        <p>&copy; 2025 by wonxinau. All rights reserved.
+            Special thanks to WonxinFilmz and kimi who helped with the gallary and graphics!
+        </p>
+    </footer>
+
+    <script>
+        // Journey gallery data
+        const journeyData = [
+            {
+                id: 1,
+                title: "Workshop",
+                date: "oct 31, 2025",
+                description: "",
+                imageUrl: "images/1.jpg"
+            },
+            {
+                id: 2,
+                title: "We are ALPHA DRIVE ONE",
+                date: "oct 27, 2025",
+                description: "",
+                imageUrl: "images/2.jpg"
+            },
+            {
+                id: 3,
+                title: "Bonding",
+                date: "oct 29, 2025",
+                description: "",
+                imageUrl: "images/3.jpg"
+            },
+            {
+                id: 4,
+                title: "Bonding",
+                date: "oct 29, 2025",
+                description: "",
+                imageUrl: "images/4.jpg"
+            },
+            {
+                id: 5,
+                title: "We are ALPHA DRIVE ONE",
+                date: "oct 27, 2025",
+                description: "",
+                imageUrl: "images/5.jpg"
+            },
+            {
+                id: 6,
+                title: "Workshop",
+                date: "oct 31, 2025",
+                description: "",
+                imageUrl: "images/6.jpg"
+            },
+            {
+                id: 7,
+                title: "We are ALPHA DRIVE ONE",
+                date: "oct 27, 2025",
+                description: "",
+                imageUrl: "images/7.jpg"
+            },
+            {
+                id: 8,
+                title: "Bring Green",
+                date: "sep 22, 2025",
+                description: "",
+                imageUrl: "images/wx2.jpg"
+            },
+            {
+                id: 9,
+                title: "First AlD1 Instagram Live",
+                date: "Sep 25, 2025",
+                description: "",
+                imageUrl: "images/wx3.jpg"
+            },
+            {
+                id: 10,
+                title: "First AlD1 Weibo Live",
+                date: "Sep 25, 2025",
+                description: "",
+                imageUrl: "images/wx4.jpg"
+            },
+            {
+                id: 11,
+                title: "After B2P Finale",
+                date: "Sep 26, 2025",
+                description: "",
+                imageUrl: "images/wx5.jpg"
+            },
+            {
+                id:12,
+                title: "ALD1 Mnet plus chat update",
+                date: "Sep 26, 2025",
+                description: "",
+                imageUrl: "images/wx6.jpg"
+            },
+            {
+                id: 13,
+                title: "Debut Announcement",
+                date: "Sep 25, 2025",
+                description: "",
+                imageUrl: "images/wx7.jpg"
+            },
+            {
+                id: 14,
+                title: "B2P exhibition",
+                date: "oct 1, 2025",
+                description: "",
+                imageUrl: "images/wx8.jpg"
+            },
+            {
+                id: 15,
+                title: "Ald1 Instagram Live",
+                date: "oct 4, 2025",
+                description: "",
+                imageUrl: "images/wx9.jpg"
+            },
+            {
+                id: 16,
+                title: "Ald1 Instagram reel ",
+                date: "oct 6, 2025",
+                description: "",
+                imageUrl: "images/wx10.jpg"
+            },
+            {
+                id: 17,
+                title: "Ald1 Instagram story",
+                date: "oct 11, 2025",
+                description: "",
+                imageUrl: "images/wx11.jpg"
+            },
+            {
+                id: 18,
+                title: "One Dream Forever",
+                date: "oct 16, 2025",
+                description: "",
+                imageUrl: "images/wx12.jpg"
+            },
+            {
+                id: 19,
+                title: "Behind The Drive",
+                date: "oct 17, 2025",
+                description: "",
+                imageUrl: "images/wx13.jpg"
+            },
+            {
+                id: 20,
+                title: "One Dream Forever",
+                date: "oct 16, 2025",
+                description: "",
+                imageUrl: "images/wx14.jpg"
+            },
+            {
+                id: 21,
+                title: "BOYS || PLANET",
+                date: "Sep 21, 2025",
+                description: "",
+                imageUrl: "images/15.jpg"
+            },
+            {
+                id: 22,
+                title: "One Dream Forever",
+                date: "oct 22, 2025",
+                description: "",
+                imageUrl: "images/wx16.jpg"
+            },
+            {
+                id: 23,
+                title: "One Dream Forever",
+                date: "oct 23, 2025",
+                description: "",
+                imageUrl: "images/wx17.jpg"
+            },
+            {
+                id: 24,
+                title: "Behind The Drive",
+                date: "oct 24, 2025",
+                description: "",
+                imageUrl: "images/wx18.jpg"
+            },
+            {
+                id: 25,
+                title: "We are ALPHA DRIVE ONE",
+                date: "oct 27, 2025",
+                description: "",
+                imageUrl: "images/wx19.jpg"
+            },
+            {
+                id: 26,
+                title: "We are ALPHA DRIVE ONE",
+                date: "oct 27, 2025",
+                description: "",
+                imageUrl: "images/wx20.jpg"
+            },
+            {
+                id: 27,
+                title: "Bonding",
+                date: "oct 29, 2025",
+                description: "",
+                imageUrl: "images/wx21.jpg"
+            },
+            {
+                id: 28,
+                title: "Workshop",
+                date: "oct 31, 2025",
+                description: "",
+                imageUrl: "images/wx22.jpg"
+            },
+            {
+                id:29,
+                title: "Behind The Drive",
+                date: "oct 31, 2025",
+                description: "",
+                imageUrl: "images/wx23.jpg"
+            },
+            {
+                id: 30,
+                title: "Behind The Drive",
+                date: "oct 31, 2025",
+                description: "",
+                imageUrl: "images/wx24.jpg"
+            },
+            {
+                id: 31,
+                title: "Behind The Drive",
+                date: "oct 31, 2025",
+                description: "",
+                imageUrl: "images/wx25.jpg"
+            },
+            {
+                id: 32,
+                title: "Ald1 Instagram reel",
+                date: "Nov 1, 2025",
+                description: "",
+                imageUrl: "images/wx26.jpg"
+            },
+            {
+                id: 33,
+                title: "Fansites Pictures",
+                date: "Nov 1, 2025",
+                description: "",
+                imageUrl: "images/wx27.jpg"
+            },
+            {
+                id: 34,
+                title: "Fansites Pictures",
+                date: "Nov 1, 2025",
+                description: "",
+                imageUrl: "images/wx28.jpg"
+            },
+            {
+                id: 35,
+                title: "Mnet Plus Chat Update",
+                date: "oct 13, 2025",
+                description: "",
+                imageUrl: "images/wx29.jpg"
+            },
+            {
+                id: 36,
+                title: "Ald1 Instagram Live",
+                date: "oct 12, 2025",
+                description: "",
+                imageUrl: "images/wx30.jpg"
+            },
+            {
+                id: 37,
+                title: "Ald1 Instagram Live",
+                date: "oct 12, 2025",
+                description: "",
+                imageUrl: "images/wx31.jpg"
+            }
+        ];
+
+        // Gallery functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageFrame = document.querySelector('.image-frame');
+            const overlayTitle = document.getElementById('overlayTitle');
+            const overlayDate = document.getElementById('overlayDate');
+            const overlayDescription = document.getElementById('overlayDescription');
+            const descriptionOverlay = document.querySelector('.description-overlay');
+            const closeOverlay = document.querySelector('.close-overlay');
+            const currentImageSpan = document.getElementById('currentImage');
+            const totalImagesSpan = document.getElementById('totalImages');
+            const prevArrow = document.querySelector('.prev-arrow');
+            const nextArrow = document.querySelector('.next-arrow');
+            
+            let currentIndex = 0;
+            
+            // Initialize gallery
+            totalImagesSpan.textContent = journeyData.length;
+            updateGallery();
+            
+            // Event listeners for navigation
+            prevArrow.addEventListener('click', showPreviousImage);
+            nextArrow.addEventListener('click', showNextImage);
+            
+            // Event listeners for overlay
+            imageFrame.addEventListener('click', toggleOverlay);
+            closeOverlay.addEventListener('click', closeOverlayHandler);
+            
+            // Close overlay when clicking outside of it
+            descriptionOverlay.addEventListener('click', function(e) {
+                if (e.target === descriptionOverlay) {
+                    closeOverlayHandler();
+                }
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft') {
+                    showPreviousImage();
+                } else if (e.key === 'ArrowRight') {
+                    showNextImage();
+                } else if (e.key === 'Escape') {
+                    closeOverlayHandler();
+                }
+            });
+            
+            // Show previous image
+            function showPreviousImage() {
+                currentIndex = (currentIndex - 1 + journeyData.length) % journeyData.length;
+                updateGallery();
+                createFloatingHeart();
+                closeOverlayHandler(); // Close overlay when changing images
+            }
+            
+            // Show next image
+            function showNextImage() {
+                currentIndex = (currentIndex + 1) % journeyData.length;
+                updateGallery();
+                createFloatingHeart();
+                closeOverlayHandler(); // Close overlay when changing images
+            }
+            
+            // Update gallery content
+            function updateGallery() {
+                const currentJourney = journeyData[currentIndex];
+                
+                // Update image
+                imageFrame.innerHTML = `
+                    <img src="${currentJourney.imageUrl}" alt="${currentJourney.title}" class="gallery-image">
+                    <div class="description-overlay">
+                        <div class="close-overlay">×</div>
+                        <h2 class="overlay-title">${currentJourney.title}</h2>
+                        <p class="overlay-date">${currentJourney.date}</p>
+                        <p class="overlay-description">${currentJourney.description}</p>
+                    </div>
+                `;
+                
+                // Update counter
+                currentImageSpan.textContent = currentIndex + 1;
+                
+                // Add fade-in animation
+                imageFrame.style.animation = 'none';
+                setTimeout(() => {
+                    imageFrame.style.animation = 'fadeIn 0.5s ease';
+                }, 10);
+                
+                // Reattach event listeners to new elements
+                const newOverlay = imageFrame.querySelector('.description-overlay');
+                const newCloseBtn = imageFrame.querySelector('.close-overlay');
+                
+                imageFrame.addEventListener('click', toggleOverlay);
+                newCloseBtn.addEventListener('click', closeOverlayHandler);
+                
+                newOverlay.addEventListener('click', function(e) {
+                    if (e.target === newOverlay) {
+                        closeOverlayHandler();
+                    }
+                });
+            }
+            
+            // Toggle overlay visibility
+            function toggleOverlay() {
+                const overlay = imageFrame.querySelector('.description-overlay');
+                overlay.classList.toggle('active');
+            }
+            
+            // Close overlay
+            function closeOverlayHandler() {
+                const overlay = imageFrame.querySelector('.description-overlay');
+                overlay.classList.remove('active');
+            }
+            
+            // Create floating heart animation
+            function createFloatingHeart() {
+                const heart = document.createElement('div');
+                heart.innerHTML = '♥';
+                heart.style.position = 'fixed';
+                heart.style.color = '#ffb6c1';
+                heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+                heart.style.left = Math.random() * window.innerWidth + 'px';
+                heart.style.top = window.innerHeight + 'px';
+                heart.style.zIndex = '1000';
+                heart.style.pointerEvents = 'none';
+                document.body.appendChild(heart);
+                
+                // Animate heart
+                const animation = heart.animate([
+                    { transform: 'translateY(0) scale(1)', opacity: 1 },
+                    { transform: `translateY(-${Math.random() * 300 + 200}px) scale(0.5)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                });
+                
+                // Remove heart after animation
+                animation.onfinish = () => {
+                    heart.remove();
+                };
+            }
+            
+            // Auto-advance gallery every 10 seconds
+            setInterval(showNextImage, 10000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wonxin - Lee Sangwon</title>
+    <style>
+        /* Base Styles & Color Palette */
+        :root {
+            --baby-pink: #ffd1dc;
+            --baby-yellow: #fff9c4;
+            --soft-pink: #ffb6c1;
+            --soft-yellow: #fff59d;
+            --text-color: #8a5a44;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--baby-pink) 0%, var(--baby-yellow) 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.5;
+            padding: 0.5rem;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            animation: bounce 2s infinite alternate;
+            text-shadow: 2px 2px 4px var(--shadow);
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            padding: 0 10px;
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px var(--shadow);
+            opacity: 0.8;
+            display: none; /* Hide on mobile initially */
+        }
+
+        .cloud-1 {
+            width: 60px;
+            height: 30px;
+            top: 15px;
+            left: 5%;
+            animation: float 15s infinite linear;
+        }
+
+        .cloud-2 {
+            width: 80px;
+            height: 40px;
+            top: 30px;
+            right: 10%;
+            animation: float 20s infinite linear reverse;
+        }
+
+        .cloud-3 {
+            width: 70px;
+            height: 35px;
+            bottom: 20px;
+            left: 15%;
+            animation: float 18s infinite linear;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 1rem 0;
+            padding: 0 0.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px var(--shadow);
+            font-size: 0.85rem;
+        }
+
+        nav a:hover {
+            background-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px var(--shadow);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 1.2rem;
+            box-shadow: 0 8px 25px var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1.2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 280px;
+            text-align: center;
+        }
+
+        .profile-image {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px var(--shadow);
+            transition: transform 0.5s ease;
+            animation: floatImage 3s infinite alternate;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.03);
+        }
+
+        .hero-text {
+            width: 100%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.8rem;
+            color: var(--soft-pink);
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            text-align: left;
+        }
+
+        .tagline {
+            font-style: italic;
+            text-align: center;
+            padding: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            margin: 0.8rem 0;
+            animation: pulse 3s infinite;
+            font-size: 0.9rem;
+        }
+
+        /* Quick Facts */
+        .quick-facts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin: 1.2rem 0;
+        }
+
+        .fact-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 0.8rem;
+            text-align: center;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .fact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+
+        .fact-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .fact-title {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+            color: var(--soft-pink);
+            font-size: 0.85rem;
+        }
+
+        .fact-detail {
+            font-size: 0.8rem;
+        }
+
+        /* Sections */
+        .info-section {
+            margin: 1.5rem 0;
+            animation: fadeIn 1s ease;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: var(--soft-pink);
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, var(--soft-pink), var(--soft-yellow));
+            margin: 0.4rem auto;
+            border-radius: 2px;
+        }
+
+        .section-content {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.2rem;
+            box-shadow: 0 4px 12px var(--shadow);
+            line-height: 1.6;
+        }
+
+        /* Albums Grid */
+        .albums-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+
+        .album-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 0.8rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+
+        .album-cover {
+            width: 100%;
+            height: 80px;
+            border-radius: 8px;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .album-title {
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .album-year {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            background-color: var(--soft-pink);
+            top: 0;
+            bottom: 0;
+            left: 15px;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            padding: 8px 0 8px 40px;
+            position: relative;
+            width: 100%;
+            animation: fadeInRight 1s ease;
+        }
+
+        .timeline-content {
+            padding: 12px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px var(--shadow);
+            position: relative;
+        }
+
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            left: -32px;
+            background-color: white;
+            top: 12px;
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 0 0 2px var(--soft-pink);
+        }
+
+        .timeline-year {
+            font-weight: bold;
+            color: var(--soft-pink);
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .timeline p {
+            font-size: 0.85rem;
+        }
+
+        /* Fun Facts */
+        .fun-facts-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .fun-facts-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px dashed var(--baby-pink);
+            font-size: 0.85rem;
+        }
+
+        .fun-facts-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .hearts {
+            margin: 0.8rem 0;
+        }
+
+        .heart {
+            display: inline-block;
+            color: var(--soft-pink);
+            font-size: 1.1rem;
+            margin: 0 0.2rem;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        @keyframes floatImage {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRight {
+            0% { opacity: 0; transform: translateX(-10px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Small devices (landscape phones, 576px and up) */
+        @media (min-width: 576px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            nav a {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .quick-facts {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1rem;
+            }
+            
+            .fact-card {
+                padding: 1rem;
+            }
+            
+            .fact-title {
+                font-size: 0.9rem;
+            }
+            
+            .fact-detail {
+                font-size: 0.85rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .albums-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .album-cover {
+                height: 90px;
+            }
+            
+            .album-title {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Medium devices (tablets, 768px and up) */
+        @media (min-width: 768px) {
+            body {
+                padding: 1.5rem;
+            }
+            
+            header {
+                padding: 1.5rem 0;
+                margin-bottom: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .cloud {
+                display: block;
+            }
+            
+            nav {
+                gap: 1.5rem;
+            }
+            
+            nav a {
+                font-size: 1rem;
+            }
+            
+            .container {
+                max-width: 1200px;
+                padding: 2rem;
+                margin-bottom: 2rem;
+            }
+            
+            .hero {
+                flex-direction: row;
+                text-align: left;
+                gap: 2rem;
+                margin-bottom: 2rem;
+            }
+            
+            .hero-text {
+                text-align: left;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .quick-facts {
+                gap: 1.5rem;
+            }
+            
+            .fact-card {
+                padding: 1.2rem;
+            }
+            
+            .fact-icon {
+                font-size: 2rem;
+            }
+            
+            .fact-title {
+                font-size: 1rem;
+            }
+            
+            .fact-detail {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .albums-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1rem;
+            }
+            
+            .album-cover {
+                height: 100px;
+            }
+            
+            .album-title {
+                font-size: 0.9rem;
+            }
+            
+            .timeline::after {
+                left: 50%;
+                margin-left: -2px;
+            }
+            
+            .timeline-item {
+                padding: 10px 40px;
+                width: 50%;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 50%;
+            }
+            
+            .timeline-content::after {
+                left: -10px;
+                right: auto;
+            }
+            
+            .timeline-item:nth-child(even) .timeline-content::after {
+                left: auto;
+                right: -10px;
+            }
+            
+            .fun-facts-list li {
+                font-size: 1rem;
+            }
+        }
+
+        /* Large devices (desktops, 992px and up) */
+        @media (min-width: 992px) {
+            .logo {
+                font-size: 3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            nav {
+                gap: 2rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .albums-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .album-cover {
+                height: 120px;
+            }
+            
+            .album-title {
+                font-size: 1rem;
+            }
+        }
+
+        /* Extra large devices (large desktops, 1200px and up) */
+        @media (min-width: 1200px) {
+            .container {
+                padding: 2.5rem;
+            }
+            
+            .hero-image {
+                max-width: 350px;
+            }
+            
+            .quick-facts {
+                gap: 2rem;
+            }
+            
+            .fact-card {
+                padding: 1.5rem;
+            }
+            
+            .fact-icon {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        
+        <div class="logo">Get to Know Sangwon</div>
+        <p class="subtitle"></p>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="#">Sangwon</a>
+            <a href="anxin.html">Anxin</a>
+            <a href="gallary.html">wonxin Gallery</a>
+            <a href="fics.html">Wonxin Space</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <div class="hero-image">
+                <img src="images/s10.jpg" alt="Lee Sangwon" class="profile-image">
+            </div>
+            <div class="hero-text">
+                <h1>Lee Sangwon</h1>
+                <p>SANGWON (상원) is an South Korean trainee under GRID Entertainment , set to debut as the center of ALD1 (Alpha Drive One)
+                  the Center of the group and winning in first place on the survival show BOYS || PLANET</p>
+                <div class="tagline">
+                    "At times like this , You're cuter"
+                </div>
+                <p>Known for his incredible talent and powerful stage presence, he has become one of the most recognized trainees of any survival show. 
+                        Before joining BOYS || PLANET he was a member of bighit trainee project TRAINEE A with fellow ALD1 member LEO.</p>
+            </div>
+        </section>
+
+        <section class="quick-facts">
+            <div class="fact-card">
+                <div class="fact-title">Height</div>
+                <div class="fact-detail">177 cm</div>
+            </div>
+            <div class="fact-card">
+                <div class="fact-title">MBTI</div>
+                <div class="fact-detail">INFP</div>
+            </div>
+            <div class="fact-card">
+                <div class="fact-title">Born</div>
+                <div class="fact-detail">May 8, 2003</div>
+            </div>
+            <div class="fact-card">
+                <div class="fact-title">Nationality</div>
+                <div class="fact-detail">Korean</div>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2 class="section-title">Musical Journey</h2>
+            <div class="section-content">
+                <p>He has many self written songs and songs under the survival show BOYS || PLANET </p>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0; color: var(--soft-pink); text-align: center;">Studio Singles</h3>
+                <div class="albums-grid">
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--baby-pink);">💙</div>
+                        <div class="album-title">trainee a - aint no privacy</div>
+                        <div class="album-year">2023</div>
+                    </div>
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--baby-yellow);">💛</div>
+                        <div class="album-title">never been 2 heaven</div>
+                        <div class="album-year">2025</div>
+                    </div>
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--soft-pink);">💜</div>
+                        <div class="album-title"> love is - chains </div>
+                        <div class="album-year">2025</div>
+                    </div>
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--soft-yellow);">❤️</div>
+                        <div class="album-title"> session O</div>
+                        <div class="album-year">2023</div>
+                    </div>
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--baby-pink);">🖤</div>
+                        <div class="album-title">g</div>
+                        <div class="album-year">2024</div>
+                    </div>
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--baby-yellow);">💙</div>
+                        <div class="album-title">U</div>
+                        <div class="album-year">2023</div>
+                    </div>
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--soft-pink);">💖</div>
+                        <div class="album-title">Nostalgia</div>
+                        <div class="album-year">2023</div>
+                    </div>
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--soft-yellow);">🧣</div>
+                        <div class="album-title">LUVYOUMORETHAN</div>
+                        <div class="album-year">2023</div>
+                    </div>
+                    <div class="album-card">
+                        <div class="album-cover" style="background: var(--soft-yellow);">💜</div>
+                        <div class="album-title">BOYS || PLANET-  How to fly</div>
+                        <div class="album-year">2025</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2 class="section-title">Career Timeline</h2>
+            <div class="section-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2021</div>
+                            <p>He was a member of BigHit‘s trainee group Trainee A (2021-2022).</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2022</div>
+                            <p>He worked part-time at a café after leaving BigHit.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2025</div>
+                            <p>Grid Entertainment announced that he had signed with the agency. Him and Leo were set to debut as a duo under the name Leo & Sangwon.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2025</div>
+                            <p>He joined BOYS || PLANET and had 7,293,777 votes in the finale.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2026</div>
+                            <p>Set to debut with ALD1's which is planned for early 2026.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2 class="section-title">Fun Facts</h2>
+            <div class="section-content">
+                <ul class="fun-facts-list">
+                    <li> His nickname is Ssaengwon</li>
+                    <li> He loves reading books and is known as a bookworm</li>
+                    <li> Representive animal- Hamster</li>
+                    <li> He's a songwriter and has a speciality in DJing and choreographing </li>
+                    <li> He's good at speaking English</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    
+    <footer>
+        <p>Made with lots of love</p>
+        <div class="hearts">
+            <span class="heart">♥</span>
+            <span class="heart">♥</span>
+            <span class="heart">♥</span>
+        </div>
+        <p>&copy; 2025 by wonxinau. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make fact cards appear with delay
+            const factCards = document.querySelectorAll('.fact-card');
+            factCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+            
+            // Make timeline items appear with delay
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.3}s`;
+            });
+            
+            // Add floating hearts on click
+            document.addEventListener('click', function(e) {
+                if (Math.random() > 0.7) { // 30% chance to create a heart
+                    createFloatingHeart(e.clientX, e.clientY);
+                }
+            });
+            
+            // Create floating heart animation
+            function createFloatingHeart(x, y) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '♥';
+                heart.style.position = 'fixed';
+                heart.style.color = '#ffb6c1';
+                heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+                heart.style.left = x + 'px';
+                heart.style.top = y + 'px';
+                heart.style.zIndex = '1000';
+                heart.style.pointerEvents = 'none';
+                document.body.appendChild(heart);
+                
+                // Animate heart
+                const animation = heart.animate([
+                    { transform: 'translateY(0) scale(1)', opacity: 1 },
+                    { transform: `translateY(-${Math.random() * 100 + 50}px) scale(0.5)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 1000 + 500,
+                    easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                });
+                
+                // Remove heart after animation
+                animation.onfinish = () => {
+                    heart.remove();
+                };
+            }
+        });
+    </script>
+</body>
+</html>

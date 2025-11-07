@@ -963,58 +963,89 @@
                 showSuccessAnimation();
             }
         });
+        // Save message with fallback
+async function saveMessage(messageData) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/create-message`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(messageData)
+        });
         
-        // Save message to Neon database via Netlify Function
-        async function saveMessage(messageData) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/create-message`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(messageData)
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to save message');
-                }
-                
-                console.log('Message saved successfully to Neon database');
-            } catch (error) {
-                console.error('Error saving message:', error);
-                alert('Failed to save message. Please try again.');
-            }
+        if (!response.ok) {
+            throw new Error('Failed to save message');
         }
         
-        // Load messages from Neon database via Netlify Function
-        async function loadMessages() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/get-messages`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to load messages');
-                }
-                
-                const messages = await response.json();
-                
-                if (messages.length === 0) {
-                    showEmptyState();
-                    return;
-                }
-                
-                messagesContainer.innerHTML = '';
-                messages.forEach(message => {
-                    displayMessage(message);
-                });
-                
-                toggleDeleteButtons(isAdminMode);
-            } catch (error) {
-                console.error('Error loading messages:', error);
-                showEmptyState();
-                alert('Cannot connect to server. Messages will be stored locally.');
-            }
+        console.log('Message saved successfully to Neon database');
+    } catch (error) {
+        console.error('Error saving message to server:', error);
+        // Fallback to localStorage
+        saveMessageToLocalStorage(messageData);
+    }
+}
+
+// Load messages with fallback
+async function loadMessages() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/get-messages`);
+        
+        if (!response.ok) {
+            throw new Error('Failed to load messages');
         }
         
+        const messages = await response.json();
+        
+        if (messages.length === 0) {
+            showEmptyState();
+            return;
+        }
+        
+        messagesContainer.innerHTML = '';
+        messages.forEach(message => {
+            displayMessage(message);
+        });
+        
+        toggleDeleteButtons(isAdminMode);
+    } catch (error) {
+        console.error('Error loading messages from server:', error);
+        // Fallback to localStorage
+        loadMessagesFromLocalStorage();
+    }
+}
+
+// Local storage fallback functions
+function saveMessageToLocalStorage(messageData) {
+    let messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
+    const newMessage = {
+        id: Date.now(),
+        author: messageData.author,
+        content: messageData.content,
+        timestamp: new Date().toISOString(),
+        replies: []
+    };
+    messages.unshift(newMessage);
+    localStorage.setItem('joyMessages', JSON.stringify(messages));
+    console.log('Message saved to localStorage as fallback');
+}
+
+function loadMessagesFromLocalStorage() {
+    const messages = JSON.parse(localStorage.getItem('joyMessages')) || [];
+    
+    if (messages.length === 0) {
+        showEmptyState();
+        return;
+    }
+    
+    messagesContainer.innerHTML = '';
+    messages.forEach(message => {
+        displayMessage(message);
+    });
+    
+    toggleDeleteButtons(isAdminMode);
+    console.log('Loaded messages from localStorage');
+}
         // Display a message in the container
         function displayMessage(message) {
             // Remove empty state if it exists

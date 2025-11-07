@@ -1122,24 +1122,23 @@ function loadMessagesFromLocalStorage() {
                 }
             });
             
-            // Add delete reply functionality
-            const replyCards = messageCard.querySelectorAll('.reply-card');
-            replyCards.forEach(replyCard => {
-                const deleteReplyBtn = replyCard.querySelector('.delete-reply-btn');
-                const replyId = replyCard.dataset.replyId;
-                
-                deleteReplyBtn.addEventListener('click', async function() {
-                    if (isAdminMode) {
-                        if (confirm('Are you sure you want to delete this reply?')) {
-                            await deleteReply(message.id, replyId);
-                            await loadMessages(); // Reload after deletion
-                        }
-                    }
-                });
-            });
-            
-            messagesContainer.appendChild(messageCard);
+          // Delete a reply - CORRECTED VERSION
+async function deleteReply(messageId, replyId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/delete-reply?messageId=${messageId}&replyId=${replyId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete reply');
         }
+        
+        console.log('Reply deleted successfully');
+    } catch (error) {
+        console.error('Error deleting reply:', error);
+        alert('Failed to delete reply. Please try again.');
+    }
+}
         
         // Add a reply to a message
         async function addReply(messageId, replyData) {

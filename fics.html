@@ -297,7 +297,6 @@
             transform: translateY(-2px);
         }
 
-        /* FIXED: Use Flexbox for header to prevent overlap */
         .message-header {
             display: flex;
             justify-content: space-between;
@@ -331,7 +330,6 @@
             line-height: 1.5;
         }
 
-        /* --- Delete Button (No longer float) --- */
         .delete-btn {
             background: white;
             color: var(--admin-red);
@@ -340,7 +338,7 @@
             padding: 4px 10px;
             font-size: 0.8rem;
             cursor: pointer;
-            display: none; /* Hidden by default */
+            display: none; 
             transition: all 0.2s;
             white-space: nowrap;
             margin-left: 10px;
@@ -351,17 +349,21 @@
             color: white;
         }
 
-        /* --- Replies Section --- */
+        /* --- FIXED: Replies Section CSS --- */
         .reply-section {
             margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(0,0,0,0.05);
+            padding-top: 1.5rem;
+            border-top: 2px dashed rgba(0,0,0,0.05);
+            
+            /* KEY FIX: Ensure vertical stacking */
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .reply-form {
             display: flex;
             gap: 0.5rem;
-            margin-bottom: 1rem;
         }
 
         .reply-input {
@@ -395,22 +397,25 @@
             display: flex;
             flex-direction: column;
             gap: 0.8rem;
+            width: 100%; /* Ensure it fills width */
         }
 
         .reply-card {
             background: rgba(255, 255, 255, 0.6);
             padding: 0.8rem 1rem;
+            padding-right: 2rem; /* Extra padding for delete button */
             border-radius: 15px;
             font-size: 0.95rem;
-            position: relative; /* For absolute positioning of delete btn */
-            border-left: 3px solid var(--soft-yellow);
+            position: relative; 
+            border-left: 4px solid var(--soft-yellow);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .reply-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.4rem;
         }
 
         .reply-author {
@@ -426,24 +431,25 @@
 
         .delete-reply-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 8px;
+            right: 8px;
             background: transparent;
             color: #ccc;
             border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
             padding: 0;
             cursor: pointer;
-            display: none; /* Hidden by default */
+            display: none; 
             font-weight: bold;
+            border-radius: 50%;
+            transition: all 0.2s;
         }
 
         .delete-reply-btn:hover {
-            color: var(--admin-red);
-            background: rgba(255,255,255,0.8);
+            color: white;
+            background: var(--admin-red);
         }
 
         /* --- Modal --- */
@@ -637,7 +643,6 @@
 
             // --- Event Listeners ---
             
-            // Form Submit
             messageForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const author = document.getElementById('author').value.trim();
@@ -661,7 +666,6 @@
                 }
             });
 
-            // Admin Modal
             adminLoginBtn.addEventListener('click', function() {
                 if (isAdminMode) deactivateAdminMode();
                 else {
@@ -763,7 +767,7 @@
 
                 const time = message.timestamp ? new Date(message.timestamp).toLocaleString() : 'Just now';
 
-                // Updated HTML Structure using Flexbox classes
+                // Helper to generate reply HTML
                 const repliesHtml = (message.replies || []).map(r => `
                     <div class="reply-card" data-reply-id="${r.id}">
                         <div class="reply-header">
@@ -823,42 +827,54 @@
                 toggleDeleteButtons(isAdminMode);
             }
 
-            // --- FIXED: Robust Reply Saving Logic for JSONB ---
+            // --- FIXED: Reply Logic for JSONB ---
             async function addReply(msgId, content, inputElem) {
                 const reply = {
-                    id: Date.now(), // Ensure unique ID
+                    id: Date.now(), 
                     author: "Anonymous", 
                     content: content,
                     timestamp: new Date().toISOString()
                 };
 
                 try {
-                    // 1. Fetch the current message object (specifically the 'replies' column)
+                    console.log("Fetching message ID:", msgId);
+                    
+                    // 1. Fetch the CURRENT message to get the existing replies array
                     const { data: msg, error } = await supabase
                         .from('messages')
                         .select('replies')
                         .eq('id', msgId)
                         .single();
                     
-                    if (error) throw error;
+                    if (error) {
+                        console.error("Error fetching message for reply:", error);
+                        throw error;
+                    }
                     if (!msg) {
                         alert("Message not found. It may have been deleted.");
                         return;
                     }
 
-                    // 2. Create new array
+                    // 2. Handle null vs array (Supabase JSONB often returns null if empty)
                     const currentReplies = msg.replies || [];
+                    
+                    // 3. Create new array
                     const updatedReplies = [...currentReplies, reply];
                     
-                    // 3. Update the database
+                    console.log("Updating with replies:", updatedReplies);
+
+                    // 4. Update the database
                     const { error: updateError } = await supabase
                         .from('messages')
                         .update({ replies: updatedReplies })
                         .eq('id', msgId);
                     
-                    if (updateError) throw updateError;
+                    if (updateError) {
+                        console.error("Error updating message:", updateError);
+                        throw updateError;
+                    }
                     
-                    // 4. Optimistic UI Update (Add to screen immediately)
+                    // 5. Optimistic UI Update (Add to screen immediately)
                     const container = inputElem.nextElementSibling;
                     const div = document.createElement('div');
                     div.className = 'reply-card';
@@ -872,7 +888,6 @@
                         <button class="delete-reply-btn">×</button>
                     `;
                     
-                    // Attach delete event to new reply
                     const newDelBtn = div.querySelector('.delete-reply-btn');
                     newDelBtn.addEventListener('click', (e) => {
                         if(confirm("Delete reply?")) deleteReplyLogic(msgId, reply.id, div);
@@ -884,7 +899,7 @@
 
                 } catch (e) {
                     console.error("Failed to save reply:", e);
-                    alert("Could not save reply. Check console for details (likely RLS policy).");
+                    alert("Could not save reply to database. Check console for details.\n\n(Make sure your RLS Policy allows UPDATING the 'replies' column!)");
                 }
             }
 
@@ -938,13 +953,11 @@
                     const el = document.querySelector(`.message-card[data-id="${payload.old.id}"]`);
                     if(el) el.remove();
                 })
-                // Listen for UPDATES (when replies are added/removed)
+                // FIX: Listen for UPDATES so replies appear in real-time
                 .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, payload => {
-                    // Find the card and re-render or update it
                     const el = document.querySelector(`.message-card[data-id="${payload.new.id}"]`);
                     if(el) {
-                        // Simple approach: remove and re-render the specific card
-                        // In a complex app, you'd diff the DOM, but this is fine here.
+                        // Re-render the card to show new replies
                         el.remove();
                         displayMessage(payload.new);
                     }

@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Satisfy&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* --- CSS Variables --- */
@@ -253,47 +255,48 @@
             transform: rotate(90deg);
         }
 
-        /* Navigation Arrows */
+        /* --- Navigation Arrows --- */
         .nav-arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: white;
-            color: var(--soft-pink);
-            width: 50px;
-            height: 50px;
+            
+            /* Glassy Bubble Style */
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            border: 2px solid white;
+            
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
+            
             display: flex;
             align-items: center;
             justify-content: center;
+            
+            color: var(--soft-pink);
             font-size: 1.5rem;
+            
             cursor: pointer;
-            box-shadow: 0 4px 15px var(--shadow);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy transition */
             z-index: 15;
-            border: 2px solid white;
+        }
+
+        .nav-arrow i {
+            transition: transform 0.3s ease;
         }
 
         .nav-arrow:hover {
             background: var(--soft-pink);
             color: white;
-            transform: translateY(-50%) scale(1.1);
+            transform: translateY(-50%) scale(1.15); /* Grow on hover */
+            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.5);
+            border-color: var(--soft-pink);
         }
-
-        .prev-arrow { left: -25px; }
-        .next-arrow { right: -25px; }
-
-        /* Counter */
-        .image-counter {
-            margin-top: 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            background: rgba(255, 255, 255, 0.6);
-            padding: 0.5rem 1.5rem;
-            border-radius: 30px;
-            box-shadow: 0 2px 10px var(--shadow);
-        }
+        
+        .prev-arrow { left: -30px; }
+        .next-arrow { right: -30px; }
 
         /* Footer */
         footer {
@@ -331,20 +334,29 @@
 
         /* --- Responsive Design --- */
         @media (max-width: 768px) {
+            /* On mobile, move arrows below the image */
             .nav-arrow {
-                width: 40px;
-                height: 40px;
+                width: 50px;
+                height: 50px;
                 font-size: 1.2rem;
-                top: 105%; /* Move arrows below image on mobile */
+                top: 105%; /* Push below */
                 transform: translateY(0);
+                border-radius: 15px; /* Pill shape on mobile */
+                position: absolute; /* Keep absolute to position left/right */
             }
             
             .nav-arrow:hover {
-                transform: scale(1.1);
+                transform: scale(1.05);
             }
 
-            .prev-arrow { left: 10%; }
-            .next-arrow { right: 10%; }
+            .prev-arrow { 
+                left: 0; 
+                right: auto; 
+            }
+            .next-arrow { 
+                right: 0; 
+                left: auto; 
+            }
             
             .image-frame {
                 aspect-ratio: 1/1; /* Square on mobile */
@@ -352,6 +364,11 @@
             
             .overlay-title {
                 font-size: 1.5rem;
+            }
+            
+            /* Ensure spacing for the arrows below */
+            .image-section {
+                margin-bottom: 3rem; 
             }
         }
     </style>
@@ -385,12 +402,9 @@
                     <!-- JS will inject images and overlays here -->
                 </div>
                 
-                <div class="image-counter">
-                    <span id="currentImage">1</span> of <span id="totalImages">37</span>
-                </div>
-                
-                <div class="nav-arrow prev-arrow">←</div>
-                <div class="nav-arrow next-arrow">→</div>
+                <!-- Navigation Arrows -->
+                <div class="nav-arrow prev-arrow"><i class="fa-solid fa-chevron-left"></i></div>
+                <div class="nav-arrow next-arrow"><i class="fa-solid fa-chevron-right"></i></div>
             </div>
         </div>
     </div>
@@ -453,15 +467,12 @@
         // --- Gallery Functionality ---
         document.addEventListener('DOMContentLoaded', function() {
             const imageFrame = document.querySelector('.image-frame');
-            const currentImageSpan = document.getElementById('currentImage');
-            const totalImagesSpan = document.getElementById('totalImages');
             const prevArrow = document.querySelector('.prev-arrow');
             const nextArrow = document.querySelector('.next-arrow');
             
             let currentIndex = 0;
             
             // Initialize
-            totalImagesSpan.textContent = journeyData.length;
             updateGallery();
             
             // Event Listeners
@@ -512,8 +523,6 @@
                     imageFrame.onclick = toggleOverlay;
                     closeBtn.onclick = (e) => { e.stopPropagation(); closeOverlayHandler(); };
                     overlay.onclick = (e) => { if(e.target === overlay) closeOverlayHandler(); };
-                    
-                    currentImageSpan.textContent = currentIndex + 1;
                     
                     // Fade in
                     imageFrame.style.opacity = '1';

@@ -3,134 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wonxin - Space </title>
+    <title>Wonxin - Space</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Satisfy&display=swap" rel="stylesheet">
+    
     <style>
-        /* Base Styles & Color Palette */
+        /* --- CSS Variables --- */
         :root {
             --baby-pink: #ffd1dc;
             --baby-yellow: #fff9c4;
             --soft-pink: #ffb6c1;
             --soft-yellow: #fff59d;
             --text-color: #8a5a44;
-            --shadow: rgba(0, 0, 0, 0.1);
+            --text-dark: #5d4037;
+            --white-glass: rgba(255, 255, 255, 0.75);
+            --shadow: rgba(138, 90, 68, 0.15);
             --admin-red: #ff6b6b;
             --admin-dark-red: #ff4757;
-            --success-green: #51cf66;
+            --border-radius: 24px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family:'Brush Script MT';
         }
 
         body {
+            font-family: 'Quicksand', sans-serif;
             background: linear-gradient(135deg, var(--baby-pink) 0%, var(--baby-yellow) 100%);
             color: var(--text-color);
             min-height: 100vh;
             overflow-x: hidden;
-            padding: 20px;
-            font-size: 16px; /* Base font size */
+            line-height: 1.6;
+            padding-bottom: 2rem;
         }
 
-        /* Header Styles */
-        header {
-            padding: 1.5rem 1rem;
-            text-align: center;
-            position: relative;
+        h1, h2, h3, .logo {
+            font-family: 'Satisfy', cursive;
+            font-weight: 400;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- Background Clouds --- */
+        .cloud-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
             overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .logo {
-            font-size: clamp(1.8rem, 5vw, 3rem); /* Responsive font size */
-            margin-bottom: 1rem;
-            animation: bounce 2s infinite alternate;
-            text-shadow: 2px 2px 4px var(--shadow);
         }
 
         .cloud {
             position: absolute;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 4px 8px var(--shadow);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            box-shadow: 0 8px 16px var(--shadow);
             opacity: 0.8;
         }
 
-        .cloud-1 {
-            width: 60px;
-            height: 30px;
-            top: 15px;
-            left: 5%;
-            animation: float 15s infinite linear;
+        .cloud::after, .cloud::before {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
         }
 
-        .cloud-2 {
-            width: 90px;
-            height: 45px;
-            top: 30px;
-            right: 10%;
-            animation: float 20s infinite linear reverse;
+        .c1 { width: 100px; height: 40px; top: 10%; left: -120px; animation: float 25s infinite linear; }
+        .c1::after { width: 50px; height: 50px; top: -25px; left: 15px; }
+        .c1::before { width: 40px; height: 40px; top: -15px; left: 50px; }
+
+        .c2 { width: 140px; height: 60px; top: 30%; right: -160px; animation: float 35s infinite linear reverse; }
+        .c2::after { width: 70px; height: 70px; top: -35px; left: 25px; }
+        .c2::before { width: 60px; height: 60px; top: -25px; left: 65px; }
+
+        /* --- Header --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--white-glass);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px var(--shadow);
+            padding: 1rem 0;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            text-align: center;
         }
 
-        .cloud-3 {
-            width: 75px;
-            height: 37px;
-            bottom: 20px;
-            left: 15%;
-            animation: float 18s infinite linear;
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            animation: bounce 3s infinite ease-in-out;
+            text-shadow: 2px 2px 0px white;
         }
 
-        /* Navigation */
         nav {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 1rem;
-            margin: 1.5rem 0;
+            gap: 0.8rem;
+            padding: 0.5rem;
         }
 
         nav a {
-            text-decoration: none;
-            color: var(--text-color);
-            padding: 0.5rem 1rem;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
             border-radius: 30px;
-            background-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.6);
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px var(--shadow);
             font-size: 0.9rem;
-            min-width: 44px; /* Minimum touch target size */
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        nav a:hover {
-            background-color: white;
+        nav a:hover, nav a.active {
+            background: white;
             transform: translateY(-3px);
-            box-shadow: 0 5px 10px var(--shadow);
+            box-shadow: 0 5px 15px var(--shadow);
+            color: var(--soft-pink);
         }
 
-        /* Main Container */
+        /* --- Main Container --- */
         .container {
-            max-width: min(800px, 95vw); /* Responsive max-width */
-            margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 25px var(--shadow);
-            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
         }
 
-        /* Admin Panel */
+        /* --- Admin Panel --- */
         .admin-panel {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 12px var(--shadow);
+            background: var(--white-glass);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px var(--shadow);
+            backdrop-filter: blur(5px);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -141,30 +159,22 @@
         .admin-toggle {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .toggle-label {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 30px;
+            width: 50px;
+            height: 26px;
         }
 
-        .toggle-label input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .toggle-label input { opacity: 0; width: 0; height: 0; }
 
         .toggle-slider {
             position: absolute;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background-color: #ccc;
             transition: .4s;
             border-radius: 34px;
@@ -173,8 +183,8 @@
         .toggle-slider:before {
             position: absolute;
             content: "";
-            height: 22px;
-            width: 22px;
+            height: 18px;
+            width: 18px;
             left: 4px;
             bottom: 4px;
             background-color: white;
@@ -182,62 +192,227 @@
             border-radius: 50%;
         }
 
-        input:checked + .toggle-slider {
-            background-color: var(--admin-red);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(30px);
-        }
+        input:checked + .toggle-slider { background-color: var(--admin-red); }
+        input:checked + .toggle-slider:before { transform: translateX(24px); }
 
         .admin-status {
-            font-weight: bold;
-            padding: 0.3rem 0.8rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
-            background-color: var(--baby-yellow);
-            color: var(--text-color);
+            background: #eee;
+            color: #888;
             font-size: 0.9rem;
+            transition: all 0.3s;
         }
 
         .admin-status.active {
-            background-color: var(--admin-red);
+            background: var(--admin-red);
             color: white;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
         }
 
-        /* Password Modal */
+        /* --- Post Form --- */
+        .post-form {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .post-form h2 {
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--soft-pink);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 182, 193, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--soft-pink);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.4);
+        }
+
+        .submit-btn:hover {
+            background: #ff9eb0;
+            transform: translateY(-2px);
+        }
+
+        /* --- Messages List --- */
+        .messages-section h2 {
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .message-card {
+            background: var(--white-glass);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .message-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px dashed rgba(0,0,0,0.05);
+        }
+
+        .message-author {
+            font-weight: 700;
+            color: var(--soft-pink);
+            font-size: 1.1rem;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .message-content {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            white-space: pre-wrap;
+        }
+
+        /* --- Replies --- */
+        .reply-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .reply-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .reply-input {
+            flex-grow: 1;
+            padding: 0.6rem 1rem;
+            border: 2px solid #eee;
+            border-radius: 20px;
+            font-family: inherit;
+        }
+
+        .reply-btn {
+            background: var(--baby-yellow);
+            border: none;
+            border-radius: 20px;
+            padding: 0 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-dark);
+            transition: background 0.3s;
+        }
+
+        .reply-btn:hover { background: var(--soft-yellow); }
+
+        .reply-card {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .reply-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+
+        /* --- Delete Buttons --- */
+        .delete-btn, .delete-reply-btn {
+            background: var(--admin-red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+        }
+        
+        .delete-reply-btn {
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            padding: 0;
+        }
+
+        /* --- Modal --- */
         .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            padding: 1rem;
+            backdrop-filter: blur(3px);
         }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
         .password-modal {
             background: white;
-            padding: 1.5rem;
+            padding: 2rem;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: min(400px, 95vw);
-            width: 100%;
+            width: 90%;
+            max-width: 400px;
             text-align: center;
-            animation: modalAppear 0.3s ease;
-        }
-
-        .modal-title {
-            color: var(--admin-red);
-            margin-bottom: 1rem;
-            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .password-input {
@@ -245,528 +420,73 @@
             padding: 0.8rem;
             margin: 1rem 0;
             border: 2px solid var(--baby-pink);
-            border-radius: 15px;
+            border-radius: 10px;
             font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .password-input:focus {
-            outline: none;
-            border-color: var(--admin-red);
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
         }
 
         .modal-btn {
             flex: 1;
             padding: 0.8rem;
             border: none;
-            border-radius: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-height: 44px; /* Minimum touch target size */
-        }
-
-        .confirm-btn {
-            background-color: var(--admin-red);
-            color: white;
-        }
-
-        .confirm-btn:hover {
-            background-color: var(--admin-dark-red);
-            transform: translateY(-2px);
-        }
-
-        .cancel-btn {
-            background-color: var(--baby-yellow);
-            color: var(--text-color);
-        }
-
-        .cancel-btn:hover {
-            background-color: var(--soft-yellow);
-            transform: translateY(-2px);
-        }
-
-        .error-message {
-            color: var(--admin-red);
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            min-height: 1.2rem;
-        }
-
-        .success-message {
-            color: var(--success-green);
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            min-height: 1.2rem;
-        }
-
-        /* Post Form */
-        .post-form {
-            margin-bottom: 2rem;
-            animation: fadeIn 1s ease;
-        }
-
-        .post-form h2 {
-            margin-bottom: 1rem;
-            color: var(--text-color);
-            text-align: center;
-            font-size: clamp(1.2rem, 4vw, 1.5rem);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid var(--soft-pink);
-            border-radius: 15px;
-            background-color: rgba(255, 255, 255, 0.8);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--soft-yellow);
-            box-shadow: 0 0 0 3px rgba(255, 245, 157, 0.3);
-        }
-
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .submit-btn {
-            display: block;
-            width: 100%;
-            padding: 0.8rem;
-            background-color: var(--soft-pink);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px var(--shadow);
-            animation: pulse 2s infinite;
-            min-height: 44px; /* Minimum touch target size */
-        }
-
-        .submit-btn:hover {
-            background-color: var(--soft-yellow);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px var(--shadow);
-        }
-
-        /* Messages Section */
-        .messages-section h2 {
-            margin-bottom: 1.5rem;
-            text-align: center;
-            color: var(--text-color);
-            font-size: clamp(1.2rem, 4vw, 1.5rem);
-        }
-
-        .messages-container {
-            max-height: 600px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        /* Message Card */
-        .message-card {
-            background-color: white;
-            border-radius: 15px;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 12px var(--shadow);
-            animation: fadeInUp 0.5s ease;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .message-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px var(--shadow);
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px dashed var(--baby-pink);
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .message-author {
-            font-weight: bold;
-            color: var(--soft-pink);
-            font-size: 1rem;
-        }
-
-        .message-time {
-            color: #aaa;
-            font-size: 0.8rem;
-        }
-
-        .message-content {
-            margin-bottom: 1rem;
-            line-height: 1.5;
-            word-break: break-word; /* Prevent long words from breaking layout */
-        }
-
-        .message-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .delete-btn {
-            background-color: var(--admin-red);
-            color: white;
-            border: none;
             border-radius: 10px;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: none;
-            min-height: 36px; /* Minimum touch target size */
+            margin: 0 5px;
         }
 
-        .delete-btn:hover {
-            background-color: var(--admin-dark-red);
-            transform: scale(1.05);
-        }
+        .confirm-btn { background: var(--admin-red); color: white; }
+        .cancel-btn { background: #eee; color: #666; }
 
-        /* Reply Section */
-        .reply-section {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px dashed var(--baby-yellow);
-        }
-
-        .reply-form {
-            display: flex;
-            margin-bottom: 1rem;
-        }
-
-        .reply-input {
-            flex-grow: 1;
-            padding: 0.5rem;
-            border: 2px solid var(--baby-yellow);
-            border-radius: 15px 0 0 15px;
-            background-color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-        }
-
-        .reply-input:focus {
-            outline: none;
-            border-color: var(--soft-yellow);
-        }
-
-        .reply-btn {
-            padding: 0.5rem 1rem;
-            background-color: var(--baby-yellow);
-            border: 2px solid var(--baby-yellow);
-            border-radius: 0 15px 15px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 60px; /* Minimum touch target size */
-        }
-
-        .reply-btn:hover {
-            background-color: var(--soft-yellow);
-        }
-
-        .replies-container {
-            margin-top: 1rem;
-        }
-
-        .reply-card {
-            background-color: rgba(255, 249, 196, 0.3);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 0.8rem;
-            animation: fadeIn 0.5s ease;
-            position: relative;
-        }
-
-        .reply-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.8rem;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-        }
-
-        .reply-author {
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
-        .reply-time {
-            color: #aaa;
-        }
-
-        .reply-content {
-            line-height: 1.4;
-            word-break: break-word; /* Prevent long words from breaking layout */
-        }
-
-        .reply-actions {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-        }
-
-        .delete-reply-btn {
-            background-color: var(--admin-red);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: none;
-        }
-
-        .delete-reply-btn:hover {
-            background-color: var(--admin-dark-red);
-            transform: scale(1.1);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-color);
-        }
-
-        .empty-state-icon {
-            font-size: clamp(3rem, 10vw, 4rem);
-            margin-bottom: 1rem;
-            animation: bounce 2s infinite alternate;
-        }
-
-        /* Footer */
+        /* --- Footer --- */
         footer {
             text-align: center;
-            padding: 1.5rem;
+            padding: 2rem;
             margin-top: 3rem;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 20px;
-            box-shadow: 0 4px 12px var(--shadow);
+            background: var(--white-glass);
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
         }
-
+        
         .hearts {
+            font-size: 1.5rem;
+            color: var(--soft-pink);
+            letter-spacing: 5px;
             margin: 1rem 0;
         }
 
-        .heart {
-            display: inline-block;
-            color: var(--soft-pink);
-            font-size: 1.5rem;
-            margin: 0 0.2rem;
-            animation: heartbeat 1.5s infinite;
-        }
-
-        /* Animations */
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-20px); }
-        }
-
+        /* --- Animations --- */
         @keyframes float {
-            0% { transform: translateX(-100px); }
-            100% { transform: translateX(calc(100vw + 100px)); }
+            0% { transform: translateX(-150px); }
+            100% { transform: translateX(100vw); }
         }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
-
-        @keyframes fadeInUp {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes modalAppear {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-
-        .shake {
-            animation: shake 0.5s ease;
-        }
-
-        /* Responsive Design */
-        /* Small devices (phones, 480px and down) */
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            
-            header {
-                padding: 1rem 0.5rem;
-            }
-            
-            .container {
-                padding: 1rem;
-                border-radius: 15px;
-            }
-            
-            .admin-panel {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .admin-toggle {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .modal-buttons {
-                flex-direction: column;
-            }
-            
-            .message-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .message-time {
-                margin-top: 0.3rem;
-            }
-            
-            .reply-form {
-                flex-direction: column;
-            }
-            
-            .reply-input {
-                border-radius: 15px;
-                margin-bottom: 0.5rem;
-            }
-            
-            .reply-btn {
-                border-radius: 15px;
-                width: 100%;
-            }
-            
-            nav {
-                gap: 0.5rem;
-            }
-            
-            nav a {
-                font-size: 0.8rem;
-                padding: 0.4rem 0.8rem;
-            }
-        }
-
-        /* Medium devices (tablets, 768px and down) */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1.2rem;
-            }
-            
-            .logo {
-                font-size: 2.2rem;
-            }
-            
-            .message-card {
-                padding: 1rem;
-            }
-            
-            .message-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .message-time {
-                margin-top: 0.3rem;
-            }
-            
-            .admin-panel {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .modal-buttons {
-                flex-direction: column;
-            }
-            
-            .cloud-1, .cloud-2, .cloud-3 {
-                display: none; /* Hide clouds on smaller screens for better performance */
-            }
-        }
-
-        /* Large devices (desktops, 1024px and down) */
-        @media (max-width: 1024px) {
-            .container {
-                max-width: 90%;
-            }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
 <body>
+    <div class="cloud-container">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+    </div>
+
     <header>
-        <div class="cloud cloud-1"></div>
-        <div class="cloud cloud-2"></div>
-        <div class="cloud cloud-3"></div>
-        
-
         <div class="logo">☁️ Wonxin Space ☁️</div>
-
         <nav>
             <a href="index.html">Home</a>
             <a href="sangwon.html">Sangwon</a>
             <a href="anxin.html">Anxin</a>
-            <a href="gallary.html">wonxin Gallery</a>
-            <a href="#">Wonxin Space</a>
+            <a href="gallary.html">Wonxin Gallery</a>
+            <a href="#" class="active">Wonxin Space</a>
         </nav>
     </header>
 
     <div class="container">
+        <!-- Admin Panel -->
         <section class="admin-panel">
             <div class="admin-toggle">
                 <span>Admin Mode:</span>
@@ -774,15 +494,16 @@
                     <input type="checkbox" id="adminToggle" disabled>
                     <span class="toggle-slider"></span>
                 </label>
-                <button id="adminLoginBtn" class="submit-btn" style="width: auto; padding: 0.5rem 1rem; margin-left: 1rem;">
+                <button id="adminLoginBtn" class="submit-btn" style="width: auto; padding: 0.5rem 1rem; margin:0;">
                     Login as Admin 🔒
                 </button>
             </div>
             <div class="admin-status" id="adminStatus">Inactive</div>
         </section>
 
+        <!-- Post Form -->
         <section class="post-form">
-            <h2>Share Your Thoughts, ask for fanfic recommendation or more!</h2>
+            <h2>Share Your Thoughts 💌</h2>
             <form id="messageForm">
                 <div class="form-group">
                     <label for="author">Your Name</label>
@@ -790,16 +511,17 @@
                 </div>
                 <div class="form-group">
                     <label for="content">Your Message</label>
-                    <textarea id="content" class="form-control" placeholder="What's on your mind?" required></textarea>
+                    <textarea id="content" class="form-control" placeholder="Ask for fics or yap about Wonxin..." required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">Post Message 💌</button>
+                <button type="submit" class="submit-btn">Post Message ✨</button>
             </form>
         </section>
 
+        <!-- Messages List -->
         <section class="messages-section">
             <h2>Community Messages</h2>
-            <div class="messages-container" id="messagesContainer">
-                <!-- Messages will be loaded here -->
+            <div id="messagesContainer">
+                <!-- Messages will be injected here -->
             </div>
         </section>
     </div>
@@ -807,467 +529,346 @@
     <!-- Password Modal -->
     <div class="modal-overlay" id="passwordModal">
         <div class="password-modal">
-            <h2 class="modal-title">Admin Authentication 🔒</h2>
-            <p>Please enter the admin password to enable admin mode:</p>
-            <input type="password" id="adminPassword" class="password-input" placeholder="Enter admin password">
-            <div class="error-message" id="passwordError"></div>
-            <div class="success-message" id="passwordSuccess"></div>
-            <div class="modal-buttons">
+            <h2 style="color: var(--admin-red); margin-bottom: 0.5rem;">Admin Authentication</h2>
+            <p>Please enter the admin password:</p>
+            <input type="password" id="adminPassword" class="password-input" placeholder="Password">
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
                 <button class="modal-btn cancel-btn" id="cancelBtn">Cancel</button>
-                <button class="modal-btn confirm-btn" id="confirmBtn">Authenticate</button>
+                <button class="modal-btn confirm-btn" id="confirmBtn">Login</button>
             </div>
         </div>
     </div>
 
-   
     <footer>
         <p>Made with lots of love</p>
         <div class="hearts">
-            <span class="heart">♥</span>
-            <span class="heart">♥</span>
-            <span class="heart">♥</span>
+            <span>♥</span><span>♥</span><span>♥</span>
         </div>
         <p>&copy; 2025 by wonxinau. All rights reserved.</p>
     </footer>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
-   document.addEventListener('DOMContentLoaded', function() {
-    const messageForm = document.getElementById('messageForm');
-    const messagesContainer = document.getElementById('messagesContainer');
-    const adminToggle = document.getElementById('adminToggle');
-    const adminStatus = document.getElementById('adminStatus');
-    const adminLoginBtn = document.getElementById('adminLoginBtn');
-    const passwordModal = document.getElementById('passwordModal');
-    const adminPassword = document.getElementById('adminPassword');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const passwordError = document.getElementById('passwordError');
-    const passwordSuccess = document.getElementById('passwordSuccess');
-    
-    // Supabase configuration - REPLACE WITH YOUR VALUES!
-    const SUPABASE_URL = 'https://duejmhtpcjmnltwgmqlx.supabase.co'; // Replace with your URL
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1ZWptaHRwY2ptbmx0d2dtcWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1MzkzOTksImV4cCI6MjA3ODExNTM5OX0.IOdSLCiUZy7WPp-r2klG8URxAcFodnoIaVhvMnD5Dkk'; // Replace with your anon key
-    
-    // Initialize Supabase
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
-    let isAdminMode = false;
-    const ADMIN_PASSWORD = "ohmywonxinyourethebestrealcouple0603";
-    
-    // Load messages when page opens
-    loadMessages();
-    
-    // Set up real-time subscription for new messages
-    supabase
-        .channel('messages')
-        .on('postgres_changes', 
-            { event: 'INSERT', schema: 'public', table: 'messages' },
-            (payload) => {
-                // New message added by someone else
-                displayMessage(payload.new);
+        document.addEventListener('DOMContentLoaded', function() {
+            const SUPABASE_URL = 'https://duejmhtpcjmnltwgmqlx.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1ZWptaHRwY2ptbmx0d2dtcWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1MzkzOTksImV4cCI6MjA3ODExNTM5OX0.IOdSLCiUZy7WPp-r2klG8URxAcFodnoIaVhvMnD5Dkk';
+            
+            let supabase;
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } catch (e) {
+                console.error("Supabase init failed:", e);
             }
-        )
-        .on('postgres_changes',
-            { event: 'DELETE', schema: 'public', table: 'messages' },
-            (payload) => {
-                // Message deleted by admin
-                const messageCard = document.querySelector(`.message-card[data-id="${payload.old.id}"]`);
-                if (messageCard) messageCard.remove();
+
+            // DOM Elements
+            const messageForm = document.getElementById('messageForm');
+            const messagesContainer = document.getElementById('messagesContainer');
+            const adminToggle = document.getElementById('adminToggle');
+            const adminStatus = document.getElementById('adminStatus');
+            const adminLoginBtn = document.getElementById('adminLoginBtn');
+            const passwordModal = document.getElementById('passwordModal');
+            const adminPassword = document.getElementById('adminPassword');
+            
+            // State
+            let isAdminMode = false;
+            const ADMIN_PASSWORD = "ohmywonxinyourethebestrealcouple0603";
+            
+            // Initial Load
+            loadMessages();
+            setupRealtime();
+
+            // --- Event Listeners ---
+            
+            // Form Submit
+            messageForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const author = document.getElementById('author').value.trim();
+                const content = document.getElementById('content').value.trim();
                 
-                // Show empty state if no messages left
-                if (document.querySelectorAll('.message-card').length === 0) {
-                    showEmptyState();
+                if (author && content) {
+                    // EXPLICITLY add timestamp so sorting works
+                    const message = {
+                        author: author,
+                        content: content,
+                        replies: [],
+                        timestamp: new Date().toISOString() 
+                    };
+                    
+                    const saved = await saveMessage(message);
+                    if (saved) {
+                        messageForm.reset();
+                        showFloatingHearts(5);
+                    } else {
+                        alert("Could not save to cloud, but saved locally!");
+                    }
+                }
+            });
+
+            // Admin Modal
+            adminLoginBtn.addEventListener('click', function() {
+                if (isAdminMode) deactivateAdminMode();
+                else {
+                    passwordModal.classList.add('active');
+                    adminPassword.value = '';
+                    adminPassword.focus();
+                }
+            });
+
+            document.getElementById('cancelBtn').addEventListener('click', () => passwordModal.classList.remove('active'));
+            
+            document.getElementById('confirmBtn').addEventListener('click', function() {
+                if (adminPassword.value === ADMIN_PASSWORD) {
+                    activateAdminMode();
+                    passwordModal.classList.remove('active');
+                } else {
+                    alert("Incorrect Password!");
+                    adminPassword.value = '';
+                }
+            });
+
+            // --- Logic Functions ---
+
+            function activateAdminMode() {
+                isAdminMode = true;
+                adminToggle.checked = true;
+                adminStatus.textContent = "Active";
+                adminStatus.classList.add('active');
+                adminLoginBtn.textContent = "Logout 🔓";
+                adminLoginBtn.style.background = "#ff4757";
+                toggleDeleteButtons(true);
+            }
+
+            function deactivateAdminMode() {
+                isAdminMode = false;
+                adminToggle.checked = false;
+                adminStatus.textContent = "Inactive";
+                adminStatus.classList.remove('active');
+                adminLoginBtn.textContent = "Login as Admin 🔒";
+                adminLoginBtn.style.background = "";
+                toggleDeleteButtons(false);
+            }
+
+            async function saveMessage(message) {
+                try {
+                    const { data, error } = await supabase
+                        .from('messages')
+                        .insert([message])
+                        .select();
+                    
+                    if (error) throw error;
+                    return true;
+                } catch (error) {
+                    console.error('Supabase Save Error:', error);
+                    // Fallback to LocalStorage
+                    let local = JSON.parse(localStorage.getItem('wonxinMessages')) || [];
+                    // Give it a fake ID for local handling
+                    message.id = Date.now(); 
+                    local.unshift(message);
+                    localStorage.setItem('wonxinMessages', JSON.stringify(local));
+                    displayMessage(message); // Show immediately
+                    return false;
                 }
             }
-        )
-        .subscribe();
-    
-    // Admin functions
-    adminLoginBtn.addEventListener('click', function() {
-        if (!isAdminMode) {
-            showPasswordModal();
-        } else {
-            deactivateAdminMode();
-        }
-    });
-    
-    function showPasswordModal() {
-        passwordModal.classList.add('active');
-        adminPassword.focus();
-        passwordError.textContent = '';
-        passwordSuccess.textContent = '';
-    }
-    
-    function hidePasswordModal() {
-        passwordModal.classList.remove('active');
-        adminPassword.value = '';
-        passwordError.textContent = '';
-        passwordSuccess.textContent = '';
-    }
-    
-    cancelBtn.addEventListener('click', hidePasswordModal);
-    
-    confirmBtn.addEventListener('click', function() {
-        const enteredPassword = adminPassword.value.trim();
-        
-        if (enteredPassword === ADMIN_PASSWORD) {
-            activateAdminMode();
-            passwordSuccess.textContent = 'Authentication successful!';
-            setTimeout(() => hidePasswordModal(), 1000);
-        } else {
-            passwordError.textContent = 'Incorrect password. Please try again.';
-            adminPassword.classList.add('shake');
-            adminPassword.value = '';
-            setTimeout(() => adminPassword.classList.remove('shake'), 500);
-        }
-    });
-    
-    adminPassword.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') confirmBtn.click();
-    });
-    
-    function activateAdminMode() {
-        isAdminMode = true;
-        adminToggle.checked = true;
-        adminStatus.textContent = 'Active';
-        adminStatus.classList.add('active');
-        adminLoginBtn.textContent = 'Logout as Admin 🔓';
-        adminLoginBtn.style.backgroundColor = 'var(--admin-red)';
-        toggleDeleteButtons(true);
-    }
-    
-    function deactivateAdminMode() {
-        isAdminMode = false;
-        adminToggle.checked = false;
-        adminStatus.textContent = 'Inactive';
-        adminStatus.classList.remove('active');
-        adminLoginBtn.textContent = 'Login as Admin 🔒';
-        adminLoginBtn.style.backgroundColor = 'var(--soft-pink)';
-        toggleDeleteButtons(false);
-    }
-    
-    adminToggle.addEventListener('change', function() {
-        if (!this.checked && isAdminMode) deactivateAdminMode();
-    });
-    
-    // Load messages from Supabase
-    async function loadMessages() {
-        try {
-            const { data: messages, error } = await supabase
-                .from('messages')
-                .select('*')
-                .order('timestamp', { ascending: false });
-            
-            if (error) throw error;
-            
-            if (!messages || messages.length === 0) {
-                showEmptyState();
-                return;
+
+            async function loadMessages() {
+                try {
+                    // Try loading from Supabase
+                    const { data: messages, error } = await supabase
+                        .from('messages')
+                        .select('*')
+                        .order('timestamp', { ascending: false }); // Order by the timestamp we explicitly added
+                    
+                    if (error) throw error;
+                    
+                    if (messages && messages.length > 0) {
+                        messagesContainer.innerHTML = '';
+                        messages.forEach(displayMessage);
+                        return;
+                    }
+                } catch (error) {
+                    console.log("Loading from LocalStorage fallback...");
+                }
+
+                // Fallback: Load from LocalStorage
+                const local = JSON.parse(localStorage.getItem('wonxinMessages')) || [];
+                if (local.length > 0) {
+                    messagesContainer.innerHTML = '';
+                    local.forEach(displayMessage);
+                } else {
+                    messagesContainer.innerHTML = `<div style="text-align:center; padding: 2rem; color: #888;">No messages yet. Be the first! 💌</div>`;
+                }
             }
-            
-            messagesContainer.innerHTML = '';
-            messages.forEach(message => {
-                displayMessage(message);
-            });
-            
-            toggleDeleteButtons(isAdminMode);
-        } catch (error) {
-            console.error('Error loading messages:', error);
-            showEmptyState();
-        }
-    }
-    
-    // Save message to Supabase
-    async function saveMessage(message) {
-        try {
-            const { data, error } = await supabase
-                .from('messages')
-                .insert([message])
-                .select();
-            
-            if (error) throw error;
-            
-            return true;
-        } catch (error) {
-            console.error('Error saving message:', error);
-            // Fallback to localStorage
-            let localMessages = JSON.parse(localStorage.getItem('joyMessages')) || [];
-            localMessages.unshift(message);
-            localStorage.setItem('joyMessages', JSON.stringify(localMessages));
-            return false;
-        }
-    }
-    
-    // Handle form submission
-    messageForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const author = document.getElementById('author').value.trim();
-        const content = document.getElementById('content').value.trim();
-        
-        if (author && content) {
-            const message = {
-                author: author,
-                content: content,
-                replies: []
-            };
-            
-            const saved = await saveMessage(message);
-            if (saved) {
-                messageForm.reset();
-                showSuccessAnimation();
-                
-                // Note: The message will appear automatically via real-time subscription
-            } else {
-                alert('Failed to save message. Please try again.');
-            }
-        }
-    });
-    
-    // Display message function
-    function displayMessage(message) {
-        const emptyState = document.querySelector('.empty-state');
-        if (emptyState) emptyState.remove();
-        
-        const messageCard = document.createElement('div');
-        messageCard.className = 'message-card';
-        messageCard.dataset.id = message.id;
-        
-        const time = new Date(message.timestamp).toLocaleString();
-        
-        messageCard.innerHTML = `
-            <div class="message-header">
-                <div class="message-author">${escapeHtml(message.author)}</div>
-                <div class="message-time">${time}</div>
-            </div>
-            <div class="message-content">${escapeHtml(message.content)}</div>
-            <div class="message-actions">
-                <button class="delete-btn">Delete Message 🗑️</button>
-            </div>
-            <div class="reply-section">
-                <div class="reply-form">
-                    <input type="text" class="reply-input" placeholder="Write a reply..." required>
-                    <button type="button" class="reply-btn">Reply 💬</button>
-                </div>
-                <div class="replies-container" id="replies-${message.id}">
-                    ${(message.replies || []).map(reply => `
-                        <div class="reply-card" data-reply-id="${reply.id}">
-                            <div class="reply-header">
-                                <div class="reply-author">${escapeHtml(reply.author)}</div>
-                                <div class="reply-time">${new Date(reply.timestamp).toLocaleString()}</div>
-                            </div>
-                            <div class="reply-content">${escapeHtml(reply.content)}</div>
-                            <div class="reply-actions">
-                                <button class="delete-reply-btn">×</button>
-                            </div>
+
+            function displayMessage(message) {
+                // Remove empty state if exists
+                if(messagesContainer.innerText.includes("No messages yet")) messagesContainer.innerHTML = '';
+
+                const card = document.createElement('div');
+                card.className = 'message-card';
+                card.dataset.id = message.id;
+
+                const time = message.timestamp ? new Date(message.timestamp).toLocaleString() : 'Just now';
+
+                // Generate HTML for existing replies
+                const repliesHtml = (message.replies || []).map(r => `
+                    <div class="reply-card" data-reply-id="${r.id}">
+                        <div class="reply-header">
+                            <strong>${escapeHtml(r.author)}</strong>
+                            <span style="color:#999">${new Date(r.timestamp).toLocaleString()}</span>
                         </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-        
-        const replyBtn = messageCard.querySelector('.reply-btn');
-        const replyInput = messageCard.querySelector('.reply-input');
-        
-        replyBtn.addEventListener('click', async function() {
-            const replyContent = replyInput.value.trim();
-            if (replyContent) {
+                        <div>${escapeHtml(r.content)}</div>
+                        <button class="delete-reply-btn" style="position:absolute; top:5px; right:5px;">×</button>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-author">${escapeHtml(message.author)}</span>
+                        <span class="message-time">${time}</span>
+                    </div>
+                    <div class="message-content">${escapeHtml(message.content)}</div>
+                    <button class="delete-btn" style="float:right;">Delete 🗑️</button>
+                    <div style="clear:both;"></div>
+                    
+                    <div class="reply-section">
+                        <div class="reply-form">
+                            <input type="text" class="reply-input" placeholder="Write a reply...">
+                            <button class="reply-btn">Reply</button>
+                        </div>
+                        <div class="replies-container">
+                            ${repliesHtml}
+                        </div>
+                    </div>
+                `;
+
+                // Reply Event
+                const replyBtn = card.querySelector('.reply-btn');
+                const replyInput = card.querySelector('.reply-input');
+                
+                replyBtn.addEventListener('click', () => {
+                    const text = replyInput.value.trim();
+                    if(text) addReply(message.id, text, replyInput);
+                });
+
+                // Delete Event
+                const delBtn = card.querySelector('.delete-btn');
+                delBtn.addEventListener('click', () => {
+                    if(confirm("Delete this message?")) deleteMessage(message.id, card);
+                });
+
+                // Delete Reply Events
+                card.querySelectorAll('.delete-reply-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const rId = e.target.parentElement.dataset.replyId;
+                        if(confirm("Delete reply?")) deleteReplyLogic(message.id, rId, e.target.parentElement);
+                    });
+                });
+
+                messagesContainer.prepend(card);
+                toggleDeleteButtons(isAdminMode);
+            }
+
+            async function addReply(msgId, content, inputElem) {
                 const reply = {
                     id: Date.now(),
-                    author: 'Anonymous',
-                    content: replyContent,
+                    author: "Anonymous", // Or get from a login system
+                    content: content,
                     timestamp: new Date().toISOString()
                 };
-                
-                await addReply(message.id, reply);
-                replyInput.value = '';
+
+                try {
+                    // Get current message
+                    const { data: msg } = await supabase.from('messages').select('replies').eq('id', msgId).single();
+                    const updatedReplies = [...(msg.replies || []), reply];
+                    
+                    await supabase.from('messages').update({ replies: updatedReplies }).eq('id', msgId);
+                    
+                    // Append to UI directly for speed
+                    const container = inputElem.nextElementSibling;
+                    const div = document.createElement('div');
+                    div.className = 'reply-card';
+                    div.innerHTML = `
+                        <div class="reply-header"><strong>${reply.author}</strong> <span>${new Date().toLocaleString()}</span></div>
+                        <div>${escapeHtml(reply.content)}</div>
+                    `;
+                    container.appendChild(div);
+                    inputElem.value = '';
+                } catch (e) {
+                    console.error(e);
+                    alert("Failed to save reply to cloud.");
+                }
+            }
+
+            async function deleteMessage(id, cardElem) {
+                try {
+                    await supabase.from('messages').delete().eq('id', id);
+                    cardElem.remove();
+                } catch (e) {
+                    // Fallback local delete
+                    let local = JSON.parse(localStorage.getItem('wonxinMessages')) || [];
+                    local = local.filter(m => m.id != id);
+                    localStorage.setItem('wonxinMessages', JSON.stringify(local));
+                    cardElem.remove();
+                }
+            }
+
+            async function deleteReplyLogic(msgId, replyId, replyElem) {
+                try {
+                    const { data: msg } = await supabase.from('messages').select('replies').eq('id', msgId).single();
+                    const updatedReplies = msg.replies.filter(r => r.id != replyId);
+                    await supabase.from('messages').update({ replies: updatedReplies }).eq('id', msgId);
+                    replyElem.remove();
+                } catch(e) { console.error(e); }
+            }
+
+            function toggleDeleteButtons(show) {
+                document.querySelectorAll('.delete-btn, .delete-reply-btn').forEach(b => {
+                    b.style.display = show ? 'block' : 'none';
+                });
+            }
+
+            function setupRealtime() {
+                if(!supabase) return;
+                supabase.channel('messages')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                    displayMessage(payload.new);
+                })
+                .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages' }, payload => {
+                    const el = document.querySelector(`.message-card[data-id="${payload.old.id}"]`);
+                    if(el) el.remove();
+                })
+                .subscribe();
+            }
+
+            function escapeHtml(text) {
+                if(!text) return "";
+                return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            }
+
+            function showFloatingHearts(count) {
+                for(let i=0; i<count; i++) {
+                    const h = document.createElement('div');
+                    h.innerHTML = '♥';
+                    h.style.position = 'fixed';
+                    h.style.color = '#ffb6c1';
+                    h.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                    h.style.left = Math.random() * window.innerWidth + 'px';
+                    h.style.top = window.innerHeight + 'px';
+                    h.style.zIndex = '9999';
+                    h.style.pointerEvents = 'none';
+                    document.body.appendChild(h);
+                    
+                    const anim = h.animate([
+                        { transform: 'translateY(0)', opacity: 1 },
+                        { transform: `translateY(-${Math.random()*300+100}px)`, opacity: 0 }
+                    ], { duration: 2000, easing: 'ease-out' });
+                    
+                    anim.onfinish = () => h.remove();
+                }
             }
         });
-        
-        replyInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') replyBtn.click();
-        });
-        
-        const deleteBtn = messageCard.querySelector('.delete-btn');
-        deleteBtn.addEventListener('click', async function() {
-            if (isAdminMode && confirm('Are you sure you want to delete this message?')) {
-                await deleteMessage(message.id);
-            }
-        });
-        
-        const replyCards = messageCard.querySelectorAll('.reply-card');
-        replyCards.forEach(replyCard => {
-            const deleteReplyBtn = replyCard.querySelector('.delete-reply-btn');
-            const replyId = replyCard.dataset.replyId;
-            deleteReplyBtn.addEventListener('click', async function() {
-                if (isAdminMode && confirm('Are you sure you want to delete this reply?')) {
-                    await deleteReply(message.id, replyId);
-                }
-            });
-        });
-        
-        messagesContainer.prepend(messageCard);
-        toggleDeleteButtons(isAdminMode);
-    }
-    
-    // Add reply to message
-    async function addReply(messageId, reply) {
-        try {
-            // First get the current message
-            const { data: message, error } = await supabase
-                .from('messages')
-                .select('replies')
-                .eq('id', messageId)
-                .single();
-            
-            if (error) throw error;
-            
-            // Update replies array
-            const currentReplies = message.replies || [];
-            const updatedReplies = [...currentReplies, reply];
-            
-            // Update in database
-            const { error: updateError } = await supabase
-                .from('messages')
-                .update({ replies: updatedReplies })
-                .eq('id', messageId);
-            
-            if (updateError) throw updateError;
-            
-            // Update UI
-            const repliesContainer = document.getElementById(`replies-${messageId}`);
-            const replyCard = document.createElement('div');
-            replyCard.className = 'reply-card';
-            replyCard.dataset.replyId = reply.id;
-            replyCard.innerHTML = `
-                <div class="reply-header">
-                    <div class="reply-author">${escapeHtml(reply.author)}</div>
-                    <div class="reply-time">${new Date(reply.timestamp).toLocaleString()}</div>
-                </div>
-                <div class="reply-content">${escapeHtml(reply.content)}</div>
-                <div class="reply-actions">
-                    <button class="delete-reply-btn">×</button>
-                </div>
-            `;
-            
-            const deleteReplyBtn = replyCard.querySelector('.delete-reply-btn');
-            deleteReplyBtn.addEventListener('click', async function() {
-                if (isAdminMode && confirm('Are you sure you want to delete this reply?')) {
-                    await deleteReply(messageId, reply.id);
-                }
-            });
-            deleteReplyBtn.style.display = isAdminMode ? 'block' : 'none';
-            
-            repliesContainer.appendChild(replyCard);
-            
-        } catch (error) {
-            console.error('Error adding reply:', error);
-        }
-    }
-    
-    // Delete message
-    async function deleteMessage(messageId) {
-        try {
-            const { error } = await supabase
-                .from('messages')
-                .delete()
-                .eq('id', messageId);
-            
-            if (error) throw error;
-            
-            // UI will update automatically via real-time subscription
-            
-        } catch (error) {
-            console.error('Error deleting message:', error);
-        }
-    }
-    
-    // Delete reply
-    async function deleteReply(messageId, replyId) {
-        try {
-            // First get the current message
-            const { data: message, error } = await supabase
-                .from('messages')
-                .select('replies')
-                .eq('id', messageId)
-                .single();
-            
-            if (error) throw error;
-            
-            // Filter out the reply to delete
-            const updatedReplies = (message.replies || []).filter(reply => reply.id != replyId);
-            
-            // Update in database
-            const { error: updateError } = await supabase
-                .from('messages')
-                .update({ replies: updatedReplies })
-                .eq('id', messageId);
-            
-            if (updateError) throw updateError;
-            
-            // Remove from UI
-            const replyCard = document.querySelector(`.reply-card[data-reply-id="${replyId}"]`);
-            if (replyCard) replyCard.remove();
-            
-        } catch (error) {
-            console.error('Error deleting reply:', error);
-        }
-    }
-    
-    function toggleDeleteButtons(show) {
-        const deleteBtns = document.querySelectorAll('.delete-btn, .delete-reply-btn');
-        deleteBtns.forEach(btn => {
-            btn.style.display = show ? 'block' : 'none';
-        });
-    }
-    
-    function showEmptyState() {
-        messagesContainer.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">💌</div>
-                <h3>No messages yet</h3>
-                <p>Be the first to share something joyful!</p>
-            </div>
-        `;
-    }
-    
-    function showSuccessAnimation() {
-        for (let i = 0; i < 5; i++) createFloatingHeart();
-    }
-    
-    function createFloatingHeart() {
-        const heart = document.createElement('div');
-        heart.innerHTML = '♥';
-        heart.style.position = 'fixed';
-        heart.style.color = '#ffb6c1';
-        heart.style.fontSize = Math.random() * 20 + 15 + 'px';
-        heart.style.left = Math.random() * window.innerWidth + 'px';
-        heart.style.top = window.innerHeight + 'px';
-        heart.style.zIndex = '1000';
-        heart.style.pointerEvents = 'none';
-        document.body.appendChild(heart);
-        
-        const animation = heart.animate([
-            { transform: 'translateY(0) scale(1)', opacity: 1 },
-            { transform: `translateY(-${Math.random() * 300 + 200}px) scale(0.5)`, opacity: 0 }
-        ], {
-            duration: Math.random() * 2000 + 1000,
-            easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
-        });
-        
-        animation.onfinish = () => heart.remove();
-    }
-    
-    function escapeHtml(unsafe) {
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-});
-</script>
-<!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    </script>
 </body>
 </html>

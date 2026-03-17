@@ -285,17 +285,19 @@
             background: var(--white-glass);
             border-radius: 20px;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             box-shadow: 0 5px 15px var(--shadow);
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.5);
             transition: transform 0.2s;
+            position: relative;
         }
 
         .message-card:hover {
             transform: translateY(-2px);
         }
 
+        /* FIXED: Use Flexbox for header to prevent overlap */
         .message-header {
             display: flex;
             justify-content: space-between;
@@ -303,6 +305,11 @@
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
             border-bottom: 2px dashed rgba(0,0,0,0.05);
+        }
+
+        .message-meta {
+            display: flex;
+            flex-direction: column;
         }
 
         .message-author {
@@ -314,17 +321,39 @@
         .message-time {
             font-size: 0.8rem;
             color: #999;
+            margin-top: 2px;
         }
 
         .message-content {
             margin-bottom: 1rem;
             font-size: 1.05rem;
             white-space: pre-wrap;
+            line-height: 1.5;
         }
 
-        /* --- Replies --- */
+        /* --- Delete Button (No longer float) --- */
+        .delete-btn {
+            background: white;
+            color: var(--admin-red);
+            border: 1px solid var(--admin-red);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+            transition: all 0.2s;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        
+        .delete-btn:hover {
+            background: var(--admin-red);
+            color: white;
+        }
+
+        /* --- Replies Section --- */
         .reply-section {
-            margin-top: 1rem;
+            margin-top: 1.5rem;
             padding-top: 1rem;
             border-top: 1px solid rgba(0,0,0,0.05);
         }
@@ -332,6 +361,7 @@
         .reply-form {
             display: flex;
             gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .reply-input {
@@ -340,6 +370,11 @@
             border: 2px solid #eee;
             border-radius: 20px;
             font-family: inherit;
+        }
+
+        .reply-input:focus {
+            outline: none;
+            border-color: var(--soft-yellow);
         }
 
         .reply-btn {
@@ -351,43 +386,64 @@
             cursor: pointer;
             color: var(--text-dark);
             transition: background 0.3s;
+            white-space: nowrap;
         }
 
         .reply-btn:hover { background: var(--soft-yellow); }
 
+        .replies-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
         .reply-card {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.6);
             padding: 0.8rem 1rem;
             border-radius: 15px;
-            margin-top: 0.8rem;
             font-size: 0.95rem;
+            position: relative; /* For absolute positioning of delete btn */
+            border-left: 3px solid var(--soft-yellow);
         }
 
         .reply-header {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            align-items: center;
             margin-bottom: 0.3rem;
         }
 
-        /* --- Delete Buttons --- */
-        .delete-btn, .delete-reply-btn {
-            background: var(--admin-red);
-            color: white;
+        .reply-author {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .reply-time {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .delete-reply-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            color: #ccc;
             border: none;
-            border-radius: 8px;
-            padding: 4px 10px;
-            font-size: 0.8rem;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            padding: 0;
             cursor: pointer;
             display: none; /* Hidden by default */
+            font-weight: bold;
         }
-        
-        .delete-reply-btn {
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            line-height: 24px;
-            padding: 0;
+
+        .delete-reply-btn:hover {
+            color: var(--admin-red);
+            background: rgba(255,255,255,0.8);
         }
 
         /* --- Modal --- */
@@ -588,11 +644,10 @@
                 const content = document.getElementById('content').value.trim();
                 
                 if (author && content) {
-                    // EXPLICITLY add timestamp so sorting works
                     const message = {
                         author: author,
                         content: content,
-                        replies: [],
+                        replies: [], // Initialize as empty array
                         timestamp: new Date().toISOString() 
                     };
                     
@@ -663,22 +718,20 @@
                     console.error('Supabase Save Error:', error);
                     // Fallback to LocalStorage
                     let local = JSON.parse(localStorage.getItem('wonxinMessages')) || [];
-                    // Give it a fake ID for local handling
                     message.id = Date.now(); 
                     local.unshift(message);
                     localStorage.setItem('wonxinMessages', JSON.stringify(local));
-                    displayMessage(message); // Show immediately
+                    displayMessage(message); 
                     return false;
                 }
             }
 
             async function loadMessages() {
                 try {
-                    // Try loading from Supabase
                     const { data: messages, error } = await supabase
                         .from('messages')
                         .select('*')
-                        .order('timestamp', { ascending: false }); // Order by the timestamp we explicitly added
+                        .order('timestamp', { ascending: false });
                     
                     if (error) throw error;
                     
@@ -702,7 +755,6 @@
             }
 
             function displayMessage(message) {
-                // Remove empty state if exists
                 if(messagesContainer.innerText.includes("No messages yet")) messagesContainer.innerHTML = '';
 
                 const card = document.createElement('div');
@@ -711,26 +763,27 @@
 
                 const time = message.timestamp ? new Date(message.timestamp).toLocaleString() : 'Just now';
 
-                // Generate HTML for existing replies
+                // Updated HTML Structure using Flexbox classes
                 const repliesHtml = (message.replies || []).map(r => `
                     <div class="reply-card" data-reply-id="${r.id}">
                         <div class="reply-header">
-                            <strong>${escapeHtml(r.author)}</strong>
-                            <span style="color:#999">${new Date(r.timestamp).toLocaleString()}</span>
+                            <span class="reply-author">${escapeHtml(r.author)}</span>
+                            <span class="reply-time">${new Date(r.timestamp).toLocaleString()}</span>
                         </div>
-                        <div>${escapeHtml(r.content)}</div>
-                        <button class="delete-reply-btn" style="position:absolute; top:5px; right:5px;">×</button>
+                        <div class="reply-content">${escapeHtml(r.content)}</div>
+                        <button class="delete-reply-btn">×</button>
                     </div>
                 `).join('');
 
                 card.innerHTML = `
                     <div class="message-header">
-                        <span class="message-author">${escapeHtml(message.author)}</span>
-                        <span class="message-time">${time}</span>
+                        <div class="message-meta">
+                            <div class="message-author">${escapeHtml(message.author)}</div>
+                            <div class="message-time">${time}</div>
+                        </div>
+                        <button class="delete-btn">Delete 🗑️</button>
                     </div>
                     <div class="message-content">${escapeHtml(message.content)}</div>
-                    <button class="delete-btn" style="float:right;">Delete 🗑️</button>
-                    <div style="clear:both;"></div>
                     
                     <div class="reply-section">
                         <div class="reply-form">
@@ -770,34 +823,68 @@
                 toggleDeleteButtons(isAdminMode);
             }
 
+            // --- FIXED: Robust Reply Saving Logic for JSONB ---
             async function addReply(msgId, content, inputElem) {
                 const reply = {
-                    id: Date.now(),
-                    author: "Anonymous", // Or get from a login system
+                    id: Date.now(), // Ensure unique ID
+                    author: "Anonymous", 
                     content: content,
                     timestamp: new Date().toISOString()
                 };
 
                 try {
-                    // Get current message
-                    const { data: msg } = await supabase.from('messages').select('replies').eq('id', msgId).single();
-                    const updatedReplies = [...(msg.replies || []), reply];
+                    // 1. Fetch the current message object (specifically the 'replies' column)
+                    const { data: msg, error } = await supabase
+                        .from('messages')
+                        .select('replies')
+                        .eq('id', msgId)
+                        .single();
                     
-                    await supabase.from('messages').update({ replies: updatedReplies }).eq('id', msgId);
+                    if (error) throw error;
+                    if (!msg) {
+                        alert("Message not found. It may have been deleted.");
+                        return;
+                    }
+
+                    // 2. Create new array
+                    const currentReplies = msg.replies || [];
+                    const updatedReplies = [...currentReplies, reply];
                     
-                    // Append to UI directly for speed
+                    // 3. Update the database
+                    const { error: updateError } = await supabase
+                        .from('messages')
+                        .update({ replies: updatedReplies })
+                        .eq('id', msgId);
+                    
+                    if (updateError) throw updateError;
+                    
+                    // 4. Optimistic UI Update (Add to screen immediately)
                     const container = inputElem.nextElementSibling;
                     const div = document.createElement('div');
                     div.className = 'reply-card';
+                    div.dataset.replyId = reply.id;
                     div.innerHTML = `
-                        <div class="reply-header"><strong>${reply.author}</strong> <span>${new Date().toLocaleString()}</span></div>
-                        <div>${escapeHtml(reply.content)}</div>
+                        <div class="reply-header">
+                            <span class="reply-author">${reply.author}</span>
+                            <span class="reply-time">${new Date().toLocaleString()}</span>
+                        </div>
+                        <div class="reply-content">${escapeHtml(reply.content)}</div>
+                        <button class="delete-reply-btn">×</button>
                     `;
+                    
+                    // Attach delete event to new reply
+                    const newDelBtn = div.querySelector('.delete-reply-btn');
+                    newDelBtn.addEventListener('click', (e) => {
+                        if(confirm("Delete reply?")) deleteReplyLogic(msgId, reply.id, div);
+                    });
+                    newDelBtn.style.display = isAdminMode ? 'block' : 'none';
+
                     container.appendChild(div);
                     inputElem.value = '';
+
                 } catch (e) {
-                    console.error(e);
-                    alert("Failed to save reply to cloud.");
+                    console.error("Failed to save reply:", e);
+                    alert("Could not save reply. Check console for details (likely RLS policy).");
                 }
             }
 
@@ -806,7 +893,6 @@
                     await supabase.from('messages').delete().eq('id', id);
                     cardElem.remove();
                 } catch (e) {
-                    // Fallback local delete
                     let local = JSON.parse(localStorage.getItem('wonxinMessages')) || [];
                     local = local.filter(m => m.id != id);
                     localStorage.setItem('wonxinMessages', JSON.stringify(local));
@@ -816,11 +902,24 @@
 
             async function deleteReplyLogic(msgId, replyId, replyElem) {
                 try {
-                    const { data: msg } = await supabase.from('messages').select('replies').eq('id', msgId).single();
-                    const updatedReplies = msg.replies.filter(r => r.id != replyId);
+                    const { data: msg, error } = await supabase
+                        .from('messages')
+                        .select('replies')
+                        .eq('id', msgId)
+                        .single();
+                    
+                    if (error) throw error;
+
+                    // Filter out the reply
+                    const updatedReplies = (msg.replies || []).filter(r => r.id != replyId);
+                    
                     await supabase.from('messages').update({ replies: updatedReplies }).eq('id', msgId);
+                    
                     replyElem.remove();
-                } catch(e) { console.error(e); }
+                } catch(e) { 
+                    console.error(e); 
+                    alert("Failed to delete reply.");
+                }
             }
 
             function toggleDeleteButtons(show) {
@@ -838,6 +937,17 @@
                 .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages' }, payload => {
                     const el = document.querySelector(`.message-card[data-id="${payload.old.id}"]`);
                     if(el) el.remove();
+                })
+                // Listen for UPDATES (when replies are added/removed)
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, payload => {
+                    // Find the card and re-render or update it
+                    const el = document.querySelector(`.message-card[data-id="${payload.new.id}"]`);
+                    if(el) {
+                        // Simple approach: remove and re-render the specific card
+                        // In a complex app, you'd diff the DOM, but this is fine here.
+                        el.remove();
+                        displayMessage(payload.new);
+                    }
                 })
                 .subscribe();
             }
@@ -865,7 +975,7 @@
                         { transform: `translateY(-${Math.random()*300+100}px)`, opacity: 0 }
                     ], { duration: 2000, easing: 'ease-out' });
                     
-                    anim.onfinish = () => h.remove();
+                    anim.onfinish(() => h.remove());
                 }
             }
         });
